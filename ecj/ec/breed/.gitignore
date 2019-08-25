@@ -1,0 +1,12 @@
+/BreedDefaults.class
+/BufferedBreedingPipeline.class
+/CheckingPipeline.class
+/FirstCopyPipeline.class
+/ForceBreedingPipeline.class
+/GenerationSwitchPipeline.class
+/InitializationPipeline.class
+/MultiBreedingPipeline.class
+/RepeatPipeline.class
+/ReproductionPipeline.class
+/StubPipeline.class
+/UniquePipeline.class
