@@ -26,7 +26,7 @@ public class Mozo extends Problem implements SimpleProblemForm
 
         //CALCULO EL FITNESS
         for (int i=0;i<ind2.genome.length;i++){
-            suma += precios[ind2.genome[i]];
+            suma += precios[i]*ind2.genome[i];
         }
 
         fitness = Math.abs(15.05 - suma);
@@ -34,7 +34,7 @@ public class Mozo extends Problem implements SimpleProblemForm
         //Asigno el fitness al individuo
         if (!(ind2.fitness instanceof SimpleFitness))
             state.output.fatal("Error. No es un SimpleFitness",null);
-        ((SimpleFitness)ind2.fitness).setFitness(state,fitness*(-1), fitness == 0);
+        ((SimpleFitness)ind2.fitness).setFitness(state,fitness*(-1), fitness < 0.0001);
         ind2.evaluated = true;
         }
     }

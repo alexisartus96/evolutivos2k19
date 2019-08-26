@@ -243,13 +243,13 @@ public class IntegerVectorSpecies extends VectorSpecies
         // Cargo valores de precios
         precios = new double [genomeSize];
 
-        precios[0] = 0;
-        precios[1] = 2.15;
-        precios[2] = 2.75;
-        precios[3] = 3.35;
-        precios[4] = 3.55;
-        precios[5] = 4.20;
-        precios[6] = 5.80;
+        //precios[0] = 0;
+        precios[0] = 2.15;
+        precios[1] = 2.75;
+        precios[2] = 3.35;
+        precios[3] = 3.55;
+        precios[4] = 4.20;
+        precios[5] = 5.80;
 
         // LOADING GLOBAL MIN/MAX GENES
         long _minGene = state.parameters.getLongWithDefault(base.push(P_MINGENE),def.push(P_MINGENE),0);
