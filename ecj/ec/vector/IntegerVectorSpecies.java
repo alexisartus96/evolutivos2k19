@@ -6,9 +6,15 @@
 
 
 package ec.vector;
+
 import ec.*;
 import ec.util.*;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.util.*;
+import java.io.IOException;
 /* 
  * IntegerVectorSpecies.java
  * 
@@ -88,6 +94,9 @@ import ec.util.*;
  
 public class IntegerVectorSpecies extends VectorSpecies
     {
+
+    public final static String RUTA_GENERATOR = "ruta-generator";
+
     public final static String P_MINGENE = "min-gene";
     public final static String P_MAXGENE = "max-gene";
     
@@ -160,6 +169,30 @@ public class IntegerVectorSpecies extends VectorSpecies
         return precios;
     }
 
+    /* Catering */
+    protected int monto;
+
+    public int getMonto(){
+        return monto;
+    }
+
+    protected int cant_tipos;
+
+    public int getCantTipos(){
+        return cant_tipos;
+    }
+
+    protected int cant_items;
+
+    public int getCantItems(){
+        return cant_items;
+    }
+
+    protected int [][] catering;
+
+    public int [][] getCatering(){
+        return catering;
+    }
 
     public long maxGene(int gene)
         {
@@ -239,7 +272,44 @@ public class IntegerVectorSpecies extends VectorSpecies
         mutationType = fill(new int[genomeSize + 1], -1);
         mutationIsBounded = new boolean[genomeSize + 1];
         randomWalkProbability = new double[genomeSize + 1];
-        
+
+        //Cargo el generador
+        catering = new int [genomeSize][3];
+
+        try{
+            String ruta_generator = state.parameters.getStringWithDefault(base.push(RUTA_GENERATOR), def.push(RUTA_GENERATOR), null);
+            //System.out.println(ruta_limite_barrios);
+            File fin = new File(ruta_generator);
+            FileInputStream fis = new FileInputStream(fin);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+
+            cant_items = Integer.parseInt(br.readLine());
+            cant_tipos = Integer.parseInt(br.readLine());
+            System.out.println(Integer.toString(cant_items));
+            System.out.println(Integer.toString(cant_tipos));
+
+            String line = null;
+            String [] line_tokens=null;
+            for (line=br.readLine(); line!=null; line=br.readLine()){
+                line_tokens = line.split(" ");
+                if (line_tokens.length == 1) {
+                    monto = Integer.parseInt(line_tokens[0]);
+                    break;
+                }
+                for (int j=0;j<3;j++) {
+                    catering[Integer.parseInt(line_tokens[0])-1][j]=Integer.parseInt(line_tokens[j+1]);
+                    System.out.println(Integer.toString((catering[Integer.parseInt(line_tokens[0])-1][j])));
+                }
+            }
+
+            System.out.println(Integer.toString(monto));
+
+            br.close();
+        }catch(IOException e){
+            state.output.fatal (e+"hubo algun problema con la lectura del archivo");
+        }
+                
         // Cargo valores de precios
         precios = new double [genomeSize];
 
