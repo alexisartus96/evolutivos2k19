@@ -286,8 +286,6 @@ public class IntegerVectorSpecies extends VectorSpecies
 
             cant_items = Integer.parseInt(br.readLine());
             cant_tipos = Integer.parseInt(br.readLine());
-            System.out.println(Integer.toString(cant_items));
-            System.out.println(Integer.toString(cant_tipos));
 
             String line = null;
             String [] line_tokens=null;
@@ -299,11 +297,9 @@ public class IntegerVectorSpecies extends VectorSpecies
                 }
                 for (int j=0;j<3;j++) {
                     catering[Integer.parseInt(line_tokens[0])-1][j]=Integer.parseInt(line_tokens[j+1]);
-                    System.out.println(Integer.toString((catering[Integer.parseInt(line_tokens[0])-1][j])));
                 }
             }
 
-            System.out.println(Integer.toString(monto));
 
             br.close();
         }catch(IOException e){
@@ -311,15 +307,15 @@ public class IntegerVectorSpecies extends VectorSpecies
         }
                 
         // Cargo valores de precios
-        precios = new double [genomeSize];
-
-        //precios[0] = 0;
-        precios[0] = 2.15;
-        precios[1] = 2.75;
-        precios[2] = 3.35;
-        precios[3] = 3.55;
-        precios[4] = 4.20;
-        precios[5] = 5.80;
+//        precios = new double [genomeSize];
+//
+//        //precios[0] = 0;
+//        precios[0] = 2.15;
+//        precios[1] = 2.75;
+//        precios[2] = 3.35;
+//        precios[3] = 3.55;
+//        precios[4] = 4.20;
+//        precios[5] = 5.80;
 
         // LOADING GLOBAL MIN/MAX GENES
         long _minGene = state.parameters.getLongWithDefault(base.push(P_MINGENE),def.push(P_MINGENE),0);
@@ -484,7 +480,37 @@ public class IntegerVectorSpecies extends VectorSpecies
             }           
         }
 
-
+    public int[] corregirSolucion(int[] solucion) {
+    	        
+        //FILTRO Y ARREGLO LAS SOLICIONES INVALIDAS
+        //SE PASAN DE PRESUPUESTO
+        int monto_requerido= monto+1;
+        int calidad_precio_actual = 0;
+		int menor_calidad_precio = 99999;
+		int menor_calidad_precio_indice = 0;
+        
+        while (monto_requerido > monto) {
+			monto_requerido=0;
+			for (int i = 0; i < cant_items; i++) {
+				monto_requerido += solucion[i]*catering[i][1];
+			}
+			while (monto_requerido > monto) {
+				calidad_precio_actual = 0;
+				menor_calidad_precio = 99999;
+				menor_calidad_precio_indice = 0;
+				for (int i = 0; i < catering.length; i++) {
+					calidad_precio_actual = catering[i][0]/catering[i][1];
+					if(calidad_precio_actual < menor_calidad_precio && solucion[i]>0) {
+						menor_calidad_precio = calidad_precio_actual;
+						menor_calidad_precio_indice = i;
+					}
+				}
+				solucion[menor_calidad_precio_indice] = solucion[menor_calidad_precio_indice]-1;
+				monto_requerido = monto_requerido - catering[menor_calidad_precio_indice][1];
+			}
+		}
+    	return solucion;
+    }
 
     
     }

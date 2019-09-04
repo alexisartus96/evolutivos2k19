@@ -83,7 +83,6 @@ public class IntegerVectorIndividual extends VectorIndividual
 
         // must clone the genome
         myobj.genome = (int[])(genome.clone());
-        
         return myobj;
         } 
 
@@ -329,6 +328,7 @@ public class IntegerVectorIndividual extends VectorIndividual
                     // else genome[x] = old;  // try again
                     }
                 }
+        genome= s.corregirSolucion(genome);
         }
         
     
@@ -337,9 +337,18 @@ public class IntegerVectorIndividual extends VectorIndividual
     public void reset(EvolutionState state, int thread)
         {
         IntegerVectorSpecies s = (IntegerVectorSpecies) species;
+        
         for(int x=0;x<genome.length;x++)
             genome[x] = randomValueFromClosedInterval((int)s.minGene(x), (int)s.maxGene(x), state.random[thread]);
+        
+        
+        /*
+         * CORREGIMOS LA SOLUCION CON LOS DATOS DE UN PROBLEMA PARTICULAR-- EJERCICIO 2 PRACTICO DE ALGORITMOS EVOLUTIVOS*/
+        genome=s.corregirSolucion(genome);
+     
         }
+    
+    
 
     public int hashCode()
         {

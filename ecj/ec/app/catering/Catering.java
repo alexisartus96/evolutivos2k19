@@ -22,14 +22,22 @@ public class Catering extends Problem implements SimpleProblemForm
 
         int [][] catering = t_spe.getCatering();
         
-        //CALCULO EL FITNESS
+        //FILTRO Y ARREGLO LAS SOLICIONES INVALIDAS
+        //SE PASAN DE PRESUPUESTO
         
-        int fitness = 1;
-
+                
+        
+        int fitness = 0;
+        for (int i = 0; i < ind2.size(); i++) {
+			fitness+= catering[i][0]*ind2.genome[i];
+		}
+        
+        
+        
         //Asigno el fitness al individuo
         if (!(ind2.fitness instanceof SimpleFitness))
             state.output.fatal("Error. No es un SimpleFitness",null);
-        ((SimpleFitness)ind2.fitness).setFitness(state,fitness*(-1), fitness < 0.0001);
+        ((SimpleFitness)ind2.fitness).setFitness(state,fitness, fitness > 9999);
         ind2.evaluated = true;
         }
     }
