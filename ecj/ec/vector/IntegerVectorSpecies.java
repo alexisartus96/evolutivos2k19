@@ -484,16 +484,16 @@ public class IntegerVectorSpecies extends VectorSpecies
     	        
         //FILTRO Y ARREGLO LAS SOLICIONES INVALIDAS
         //SE PASAN DE PRESUPUESTO
-        int monto_requerido= monto+1;
+        int monto_requerido= 0;
         int calidad_precio_actual = 0;
 		int menor_calidad_precio = 99999;
 		int menor_calidad_precio_indice = 0;
+
+		for (int i = 0; i < cant_items; i++) {
+			monto_requerido += solucion[i]*catering[i][1];
+		}
         
         while (monto_requerido > monto) {
-			monto_requerido=0;
-			for (int i = 0; i < cant_items; i++) {
-				monto_requerido += solucion[i]*catering[i][1];
-			}
 			while (monto_requerido > monto) {
 				calidad_precio_actual = 0;
 				menor_calidad_precio = 99999;
@@ -509,6 +509,10 @@ public class IntegerVectorSpecies extends VectorSpecies
 				monto_requerido = monto_requerido - catering[menor_calidad_precio_indice][1];
 			}
 		}
+    	return solucion;
+    }
+    
+    public int[] nivelarSolucion(int[] solucion) {
     	return solucion;
     }
 
