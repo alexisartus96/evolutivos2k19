@@ -163,22 +163,12 @@ public class VectorCrossoverPipeline extends BreedingPipeline
             ((VectorIndividual)(parents.get(0))).defaultCrossover(state,thread,((VectorIndividual)(parents.get(1))));
             parents.get(0).evaluated=false;
             parents.get(1).evaluated=false;
-            IntegerVectorIndividual ind1 = (IntegerVectorIndividual)parents.get(0);
-            IntegerVectorIndividual ind2 = (IntegerVectorIndividual)parents.get(1);
-            IntegerVectorSpecies t_spe = (IntegerVectorSpecies)ind2.species;
-            
-
-            
-            
-            ind1.genome=t_spe.corregirSolucion(ind1.genome);
-            ind2.genome=t_spe.corregirSolucion(ind2.genome);
-
             
             
             // add 'em to the population
             // by Ermo. this should use add instead of set, because the inds is empty, so will throw index out of bounds
             // okay -- Sean
-            inds.add(ind1);
+            inds.add(parents.get(0));
             if (preserveParents != null)
                 {
                 parentparents[0].addAll(parentparents[1]);
@@ -188,7 +178,7 @@ public class VectorCrossoverPipeline extends BreedingPipeline
             if (q<n+start && !tossSecondParent)
                 {
                 // by Ermo. as as here, see the comments above
-                inds.add(ind2);
+                inds.add(parents.get(1));
                 if (preserveParents != null)
                     {
                     preserveParents[q] = new IntBag(parentparents[0]);

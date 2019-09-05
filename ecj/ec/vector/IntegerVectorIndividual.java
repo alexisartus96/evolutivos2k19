@@ -228,6 +228,9 @@ public class IntegerVectorIndividual extends VectorIndividual
                 }
             break;
             }
+        
+        	genome= s.corregirSolucion(genome);
+        	i.genome= s.corregirSolucion(i.genome);
         }
 
     /** Splits the genome into n pieces, according to points, which *must* be sorted. 
@@ -327,8 +330,8 @@ public class IntegerVectorIndividual extends VectorIndividual
                     if (genome[x] != old) break;
                     // else genome[x] = old;  // try again
                     }
+                genome= s.corregirSolucion(genome);
                 }
-        genome= s.corregirSolucion(genome);
         }
         
     

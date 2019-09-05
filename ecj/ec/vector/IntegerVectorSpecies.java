@@ -485,21 +485,23 @@ public class IntegerVectorSpecies extends VectorSpecies
         //FILTRO Y ARREGLO LAS SOLICIONES INVALIDAS
         //SE PASAN DE PRESUPUESTO
         int monto_requerido= 0;
-        int calidad_precio_actual = 0;
-		int menor_calidad_precio = 99999;
+        float calidad_precio_actual = 0;
+		float menor_calidad_precio = 99999;
 		int menor_calidad_precio_indice = 0;
 
 		for (int i = 0; i < cant_items; i++) {
 			monto_requerido += solucion[i]*catering[i][1];
 		}
-        
+
+    	monto_requerido = nivelarSolucion(solucion, monto_requerido);
+    	
         while (monto_requerido > monto) {
 			while (monto_requerido > monto) {
 				calidad_precio_actual = 0;
 				menor_calidad_precio = 99999;
 				menor_calidad_precio_indice = 0;
 				for (int i = 0; i < catering.length; i++) {
-					calidad_precio_actual = catering[i][0]/catering[i][1];
+					calidad_precio_actual = (float)catering[i][0]/(float)catering[i][1];
 					if(calidad_precio_actual < menor_calidad_precio && solucion[i]>0) {
 						menor_calidad_precio = calidad_precio_actual;
 						menor_calidad_precio_indice = i;
@@ -508,12 +510,76 @@ public class IntegerVectorSpecies extends VectorSpecies
 				solucion[menor_calidad_precio_indice] = solucion[menor_calidad_precio_indice]-1;
 				monto_requerido = monto_requerido - catering[menor_calidad_precio_indice][1];
 			}
+//			monto_requerido = nivelarSolucion(solucion, monto_requerido);
 		}
+        
     	return solucion;
     }
     
-    public int[] nivelarSolucion(int[] solucion) {
-    	return solucion;
+    public int nivelarSolucion(int[] solucion, int monto_requerido) {
+    	int [] precio_por_tipo = new int[cant_tipos];
+    	float [] menor_calidad_precio_tipo = new float[cant_tipos];
+    	float calidad_precio_actual=0;
+    	int [] menor_calidad_precio_tipo_indice = new int[cant_tipos];
+    	float const_distribucion = ((float)monto/(float)cant_tipos)*2;
+    	boolean solucion_nivelada=false;
+    	
+    	
+    	
+    	while(!solucion_nivelada) {
+    		for (int i = 0; i < precio_por_tipo.length; i++) {
+    			precio_por_tipo[i]=0;
+    			menor_calidad_precio_tipo[i]=99999;
+    			menor_calidad_precio_tipo_indice[i]=0;
+    		}
+    		
+	    	solucion_nivelada=true;
+	    	
+			for (int i = 0; i < solucion.length; i++) {
+				precio_por_tipo[catering[i][2]-1] += solucion[i]*catering[i][1];
+				calidad_precio_actual=catering[i][0]/catering[i][1];
+				if(solucion[i] > 0 && ( calidad_precio_actual < menor_calidad_precio_tipo[catering[i][2]-1])) {
+					menor_calidad_precio_tipo[catering[i][2]-1]= calidad_precio_actual;
+					menor_calidad_precio_tipo_indice[catering[i][2]-1] = i;
+				}
+			}
+			for (int i = 0; i < cant_tipos; i++) {
+				if(precio_por_tipo[i]>const_distribucion) {
+					solucion[menor_calidad_precio_tipo_indice[i]]--;
+					precio_por_tipo[i] -= catering[menor_calidad_precio_tipo_indice[i]][1];
+					monto_requerido -= catering[menor_calidad_precio_tipo_indice[i]][1];
+					solucion_nivelada = false;
+				}
+			}
+    	}
+//    	int [] precio_por_tipo2= new int[cant_tipos];
+//    	for (int i = 0; i < cant_tipos; i++) {
+//    		precio_por_tipo2[i]=0;
+//		}
+//    	for (int i = 0; i < solucion.length; i++) {
+//			precio_por_tipo2[catering[i][2]-1] += solucion[i]*catering[i][1];
+//		}
+
+
+//        for (int i = 0; i < solucion.length; i++) {
+//        	if(solucion[i]>=6) {
+//            	System.out.println("");
+//            	System.out.println("");
+//            	System.out.println("");
+//            	System.out.println("");
+//            	System.out.println("");
+//            	System.out.println("");
+//            	for (int j = 0; j < cant_tipos; j++) {
+//        			
+//        			System.out.println(precio_por_tipo[j]);
+//        		}
+//            }
+//		}
+        
+    	
+    	
+		
+    	return monto_requerido;
     }
 
     
