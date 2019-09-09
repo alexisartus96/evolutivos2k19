@@ -205,22 +205,23 @@ public class EvolutionState implements Singleton
         an evolutionary run.  */
     public Object[] job;
 
-    
-    /** The original runtime arguments passed to the Java process. You probably should not modify this inside an evolutionary run.  */
+    /** The original runtime arguments passed to the Java process. You probably should not modify this inside
+        an evolutionary run.  */
     public String[] runtimeArguments;
-            
-    public static final int UNDEFINED = 0;
-
+        
+    // set during running
+    
     /** The current generation of the population in the run.  For non-generational approaches, this probably should represent some kind of incrementing value, perhaps the number of individuals evaluated so far.  You probably shouldn't modify this. */
     public int generation;
-    
-    /** The current number of evaluations which have transpired so far in the run.  This is only updated on a generational boundary. */
-    public int evaluations;
-    
-    /** The number of generations the evolutionary computation system will run until it ends, or UNDEFINED */
-    public int numGenerations = UNDEFINED;
+    /** The number of generations the evolutionary computation system will run until it ends.
+        If the user has specified a desired number of evaluations instead of generations, then
+        this value will not be valid until after the first generation has been created (but before
+        it has bene evaluated).
+        If after the population has been evaluated the Evaluator returns true for runComplete(...), and quitOnRunComplete is true, then the system will quit.  You probably shouldn't modify this.  */
+    public int numGenerations;
 
-    /** The number of evaluations the evolutionary computation system will run until it ends (up to the next generation boundary), or UNDEFINED */
+    public static final int UNDEFINED = 0;
+    /** How many evaluations should we run for?  If set to UNDEFINED (0), we run for the number of generations instead. */
     public long numEvaluations = UNDEFINED;
 
     /** The current population.  This is <i>not</i> a singleton object, and may be replaced after every generation in a generational approach. You should only access this in a read-only fashion.  */
@@ -243,10 +244,6 @@ public class EvolutionState implements Singleton
 
     /** The population exchanger, a singleton object.  You should only access this in a read-only fashion. */
     public Exchanger exchanger;
-
-    /** Global birthday tracker number for genes in representations such as NEAT. Accessed and modified during run time */
-
-    public long innovationNumber;
 
     /** "The population has started fresh (not from a checkpoint)." */ 
     public final static int C_STARTED_FRESH = 0;
@@ -276,11 +273,7 @@ public class EvolutionState implements Singleton
     public final static String P_CHECKPOINTMODULO = "checkpoint-modulo";
     public final static String P_CHECKPOINTDIRECTORY = "checkpoint-directory";
     public final static String P_CHECKPOINT = "checkpoint";
-    public final static String P_INNOVATIONNUMBER = "innovation-number";
     final static String P_CHECKPOINTPREFIX_OLD = "prefix";
-
-    
-    
 
     /** This will be called to create your evolution state; immediately
         after the constructor is called,
@@ -351,6 +344,9 @@ public class EvolutionState implements Singleton
             }
         else checkpointDirectory = null;
             
+        
+        // load evaluations, or generations, or both
+            
         p = new Parameter(P_EVALUATIONS);
         if (parameters.exists(p, null))
             {
@@ -366,15 +362,17 @@ public class EvolutionState implements Singleton
                                 
             if (numGenerations <= 0)
                 output.fatal("If defined, the number of generations must be an integer >= 1.", p, null);
+
+            if (numEvaluations != UNDEFINED)  // both defined
+                {
+                state.output.warning("Both generations and evaluations defined: generations will be ignored and computed from the evaluations.");
+                numGenerations = UNDEFINED;
+                }
             }
-                        
-        if (numEvaluations != UNDEFINED && numGenerations != UNDEFINED)
-            {
-            state.output.warning("Both generations and evaluations defined: whichever happens first is when ECJ will stop.");
-            }
-        else if (numEvaluations == UNDEFINED && numGenerations == UNDEFINED)  // uh oh, something must be defined
+        else if (numEvaluations == UNDEFINED)  // uh oh, something must be defined
             output.fatal("Either evaluations or generations must be defined.", new Parameter(P_GENERATIONS), new Parameter(P_EVALUATIONS));
 
+        
         p=new Parameter(P_QUITONRUNCOMPLETE);
         quitOnRunComplete = parameters.getBoolean(p,null,false);
 
@@ -409,12 +407,10 @@ public class EvolutionState implements Singleton
         exchanger = (Exchanger)
             (parameters.getInstanceForParameter(p,null,Exchanger.class));
         exchanger.setup(this,p);
-
-        p=new Parameter(P_INNOVATIONNUMBER);
-        innovationNumber = parameters.getLong(p, null, Long.MIN_VALUE);
                 
         generation = 0;
         }
+
 
     /** This method is called after a checkpoint
         is restored from but before the run starts up again.  You might use this
@@ -435,27 +431,6 @@ public class EvolutionState implements Singleton
 
     public int evolve()
         throws InternalError { return R_NOTDONE; }
-
-
-    // This is broken out like this so that incrementEvaluations can get inlined
-    Object[] lock = new Object[0];
-    void synchronizedIncrementEvaluations(int val)
-        {
-        synchronized(lock)
-            {
-            evaluations++;
-            }
-        }
-                                
-    public void incrementEvaluations(int val)
-        {
-        if (evalthreads == 1)
-            evaluations += val;
-        else
-            {
-            synchronizedIncrementEvaluations(val);
-            }
-        }
 
     /** Starts the run. <i>condition</i> indicates whether or not the
         run was restarted from a checkpoint (C_STARTED_FRESH vs

@@ -380,7 +380,7 @@ public class MultiObjectiveFitness extends Fitness
 
     // Remove an individual from the ArrayList, shifting the topmost
     // individual in his place
-    static void yank(int val, ArrayList<Individual> list)
+    static void yank(int val, ArrayList list)
         {
         int size = list.size();
         list.set(val, list.get(size - 1));
@@ -394,18 +394,18 @@ public class MultiObjectiveFitness extends Fitness
      * null for the nonFront, non-front individuals will not be added to it.  This algorithm is
      * O(n^2).
      */
-    public static ArrayList<Individual> partitionIntoParetoFront(ArrayList<Individual> inds, ArrayList<Individual> front, ArrayList<Individual> nonFront)
+    public static ArrayList partitionIntoParetoFront(Individual[] inds, ArrayList front, ArrayList nonFront)
         {
         if (front == null)
-            front = new ArrayList<Individual>();
+            front = new ArrayList();
                         
         // put the first guy in the front
-        front.add(inds.get(0));
+        front.add(inds[0]);
                 
         // iterate over all the remaining individuals
-        for (int i = 1; i < inds.size(); i++)
+        for (int i = 1; i < inds.length; i++)
             {
-            Individual ind = (Individual) (inds.get(i));
+            Individual ind = (Individual) (inds[i]);
 
             boolean noOneWasBetter = true;
             int frontSize = front.size();
@@ -442,18 +442,19 @@ public class MultiObjectiveFitness extends Fitness
 
     /** Divides inds into pareto front ranks (each an ArrayList), and returns them, in order,
         stored in an ArrayList. */
-    public static ArrayList<ArrayList<Individual>> partitionIntoRanks(ArrayList<Individual> inds)
+    public static ArrayList partitionIntoRanks(Individual[] inds)
         {
-        ArrayList<ArrayList<Individual>> frontsByRank = new ArrayList<ArrayList<Individual>>();
+        Individual[] dummy = new Individual[0];
+        ArrayList frontsByRank = new ArrayList();
 
-        while(inds.size() > 0)
+        while(inds.length > 0)
             {
-            ArrayList<Individual> front = new ArrayList<Individual>();
-            ArrayList<Individual> nonFront = new ArrayList<Individual>();
+            ArrayList front = new ArrayList();
+            ArrayList nonFront = new ArrayList();
             MultiObjectiveFitness.partitionIntoParetoFront(inds, front, nonFront);
                         
             // build inds out of remainder
-            inds = new ArrayList<Individual>(nonFront);
+            inds = (Individual[]) nonFront.toArray(dummy);
             frontsByRank.add(front);
             }
         return frontsByRank;
@@ -462,20 +463,20 @@ public class MultiObjectiveFitness extends Fitness
 
     /** Returns the Pareto rank for each individual.  Rank 0 is the best rank, then rank 1, and so on.  This is O(n) but it has a high constant overhead because it
         allocates a hashmap and does some autoboxing. */
-    public static int[] getRankings(ArrayList<Individual> inds)
+    public static int[] getRankings(Individual[] inds)
         {
-        int[] r = new int[inds.size()];
-        ArrayList<ArrayList<Individual>> ranks = partitionIntoRanks(inds);  // get all the ranks
+        int[] r = new int[inds.length];
+        ArrayList ranks = partitionIntoRanks(inds);  // get all the ranks
         
         // build a mapping of Individual -> index in inds array
-        HashMap<Individual, Integer> m = new HashMap<Individual, Integer>();
-        for(int i = 0; i < inds.size(); i++)
-            m.put(inds.get(i), Integer.valueOf(i));
+        HashMap m = new HashMap();
+        for(int i = 0; i < inds.length; i++)
+            m.put(inds[i], Integer.valueOf(i));
         
         int numRanks = ranks.size();
         for(int rank = 0 ; rank < numRanks; rank++)  // for each rank...
             {
-            ArrayList<Individual> front = ranks.get(rank);
+            ArrayList front = (ArrayList)(ranks.get(rank));
             int numInds = front.size();
             for(int ind = 0; ind < numInds; ind++)  // for each individual in that rank ...
                 {

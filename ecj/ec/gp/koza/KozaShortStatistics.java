@@ -8,6 +8,7 @@
 package ec.gp.koza;
 import ec.*;
 import ec.gp.*;
+import java.io.*;
 import ec.util.*;
 import ec.simple.*;
 
@@ -97,18 +98,18 @@ public class KozaShortStatistics extends SimpleShortStatistics
         {
         super.postInitializationStatistics(state);
                 
-        totalDepthSoFarTree = new long[state.population.subpops.size()][];
-        totalSizeSoFarTree = new long[state.population.subpops.size()][];
+        totalDepthSoFarTree = new long[state.population.subpops.length][];
+        totalSizeSoFarTree = new long[state.population.subpops.length][];
 
-        for(int x = 0; x < state.population.subpops.size(); x++)
+        for(int x = 0 ; x < state.population.subpops.length; x++)
             {
             // check to make sure they're the right class
-            if ( !(state.population.subpops.get(x).species instanceof GPSpecies ))
+            if ( !(state.population.subpops[x].species instanceof GPSpecies ))
                 state.output.fatal("Subpopulation " + x +
                     " is not of the species form GPSpecies." + 
                     "  Cannot do timing statistics with KozaShortStatistics.");
                 
-            GPIndividual i = (GPIndividual)(state.population.subpops.get(x).individuals.get(0));
+            GPIndividual i = (GPIndividual)(state.population.subpops[x].individuals[0]);
             totalDepthSoFarTree[x] = new long[i.trees.length];
             totalSizeSoFarTree[x] = new long[i.trees.length];
             }
@@ -117,12 +118,12 @@ public class KozaShortStatistics extends SimpleShortStatistics
 
     protected void prepareStatistics(EvolutionState state)
         {
-        totalDepthThisGenTree = new long[state.population.subpops.size()][];
-        totalSizeThisGenTree = new long[state.population.subpops.size()][];
+        totalDepthThisGenTree = new long[state.population.subpops.length][];
+        totalSizeThisGenTree = new long[state.population.subpops.length][];
 
-        for(int x = 0; x < state.population.subpops.size(); x++)
+        for(int x = 0 ; x < state.population.subpops.length; x++)
             {
-            GPIndividual i = (GPIndividual)(state.population.subpops.get(x).individuals.get(0));
+            GPIndividual i = (GPIndividual)(state.population.subpops[x].individuals[0]);
             totalDepthThisGenTree[x] = new long[i.trees.length];
             totalSizeThisGenTree[x] = new long[i.trees.length];
             }
@@ -131,7 +132,7 @@ public class KozaShortStatistics extends SimpleShortStatistics
 
     protected void gatherExtraSubpopStatistics(EvolutionState state, int subpop, int individual)
         {
-        GPIndividual i = (GPIndividual)(state.population.subpops.get(subpop).individuals.get(individual));
+        GPIndividual i = (GPIndividual)(state.population.subpops[subpop].individuals[individual]);
         for(int z =0; z < i.trees.length; z++)
             {
             totalDepthThisGenTree[subpop][z] += i.trees[z].child.depth();
@@ -167,7 +168,7 @@ public class KozaShortStatistics extends SimpleShortStatistics
         long totalDepthThisGenPop = 0;
         long totalDepthSoFarPop = 0;
 
-        int subpops = state.population.subpops.size();
+        int subpops = state.population.subpops.length;
 
         for(int y = 0; y < subpops; y++)
             {

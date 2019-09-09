@@ -6,13 +6,9 @@
 
 
 package ec.select;
-import java.util.ArrayList;
-
 import ec.*;
 import ec.util.*;
 import ec.steadystate.*;
-
-import java.util.HashMap;
 
 /* 
  * FirstSelection.java
@@ -56,13 +52,13 @@ public class FirstSelection extends SelectionMethod implements SteadyStateBSourc
 
     // I hard-code both produce(...) methods for efficiency's sake
 
-    public int produce(final int min,
-        final int max,
+    public int produce(final int min, 
+        final int max, 
         final int start,
         final int subpopulation,
         final Individual[] inds,
         final EvolutionState state,
-        final int thread, HashMap<String, Object> misc)
+        final int thread) 
         {
         int n = 1;
         if (n>max) n = max;
@@ -71,15 +67,8 @@ public class FirstSelection extends SelectionMethod implements SteadyStateBSourc
         for(int q = 0; q < n; q++)
             {
             // pick size random individuals, then pick the best.
-            ArrayList<Individual> oldinds = state.population.subpops.get(subpopulation).individuals;
-            inds[start+q] = oldinds.get(0);  // note it's a pointer transfer, not a copy!
-            if(misc!=null&&misc.get(KEY_PARENTS)!=null)
-                {
-                IntBag parent = new IntBag(1);
-                parent.add(0);
-                ((IntBag[])misc.get(KEY_PARENTS))[start+q] = parent;
-                }
-            
+            Individual[] oldinds = state.population.subpops[subpopulation].individuals;
+            inds[start+q] = oldinds[0];  // note it's a pointer transfer, not a copy!
             }
         return n;
         }

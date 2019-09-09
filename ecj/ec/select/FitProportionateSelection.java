@@ -58,13 +58,11 @@ public class FitProportionateSelection extends SelectionMethod
         final int subpopulation,
         final int thread)
         {
-        super.prepareToProduce(s, subpopulation, thread);
-
         // load fitnesses
-        fitnesses = new double[s.population.subpops.get(subpopulation).individuals.size()];
+        fitnesses = new double[s.population.subpops[subpopulation].individuals.length];
         for(int x=0;x<fitnesses.length;x++)
             {
-            fitnesses[x] = ((Individual)(s.population.subpops.get(subpopulation).individuals.get(x))).fitness.fitness();
+            fitnesses[x] = ((Individual)(s.population.subpops[subpopulation].individuals[x])).fitness.fitness();
             if (fitnesses[x] < 0) // uh oh
                 s.output.fatal("Discovered a negative fitness value.  FitProportionateSelection requires that all fitness values be non-negative(offending subpopulation #" + subpopulation + ")");
             }
@@ -86,8 +84,6 @@ public class FitProportionateSelection extends SelectionMethod
         final int subpopulation,
         final int thread)
         {
-        super.finishProducing(s, subpopulation, thread);
-
         // release the distributions so we can quickly 
         // garbage-collect them if necessary
         fitnesses = null;

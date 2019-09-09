@@ -30,20 +30,19 @@ public class CoevolutionaryECSuite extends ECSuite implements GroupedProblemForm
         
     public void preprocessPopulation(final EvolutionState state, Population pop, boolean[] prepareForAssessment, boolean countVictoriesOnly)
         {
-        for(int i = 0; i < pop.subpops.size(); i++ )
+        for( int i = 0 ; i < pop.subpops.length ; i++ )
             if (prepareForAssessment[i])
-                for(int j = 0; j < pop.subpops.get(i).individuals.size() ; j++ )
-                    ((SimpleFitness)(pop.subpops.get(i).individuals.get(j).fitness)).trials = new ArrayList();
+                for( int j = 0 ; j < pop.subpops[i].individuals.length ; j++ )
+                    ((SimpleFitness)(pop.subpops[i].individuals[j].fitness)).trials = new ArrayList();
         }
 
-    public int postprocessPopulation(final EvolutionState state, Population pop, boolean[] assessFitness, boolean countVictoriesOnly)
+    public void postprocessPopulation(final EvolutionState state, Population pop, boolean[] assessFitness, boolean countVictoriesOnly)
         {
-        int total = 0;
-        for(int i = 0; i < pop.subpops.size(); i++ )
+        for( int i = 0 ; i < pop.subpops.length ; i++ )
             if (assessFitness[i])
-                for(int j = 0; j < pop.subpops.get(i).individuals.size() ; j++ )
+                for( int j = 0 ; j < pop.subpops[i].individuals.length ; j++ )
                     {
-                    SimpleFitness fit = ((SimpleFitness)(pop.subpops.get(i).individuals.get(j).fitness));
+                    SimpleFitness fit = ((SimpleFitness)(pop.subpops[i].individuals[j].fitness));
                                                                         
                     // we take the max over the trials
                     double max = Double.NEGATIVE_INFINITY;
@@ -52,10 +51,8 @@ public class CoevolutionaryECSuite extends ECSuite implements GroupedProblemForm
                         max = Math.max(((Double)(fit.trials.get(l))).doubleValue(), max);  // it'll be the first one, but whatever
                                         
                     fit.setFitness(state, max, isOptimal(problemType, max));
-                    pop.subpops.get(i).individuals.get(j).evaluated = true;
-                    total++;
+                    pop.subpops[i].individuals[j].evaluated = true;
                     }
-        return total;
         }
 
 

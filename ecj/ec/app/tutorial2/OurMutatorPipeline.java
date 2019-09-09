@@ -10,9 +10,6 @@ import ec.vector.*;
 import ec.*;
 import ec.util.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /*
  * OurMutatorPipeline.java
  */
@@ -48,24 +45,30 @@ public class OurMutatorPipeline extends BreedingPipeline
     // starting with the slot inds[start].  Let's do this by telling our 
     // source to stick those individuals into inds[] and then mutating them
     // right there.
-    public int produce(final int min,
-        final int max,
+    public int produce(final int min, 
+        final int max, 
+        final int start,
         final int subpopulation,
-        final ArrayList<Individual> inds,
+        final Individual[] inds,
         final EvolutionState state,
-        final int thread, HashMap<String, Object> misc)
+        final int thread) 
         {
-        int start = inds.size();
-        
         // grab individuals from our source and stick 'em right into inds.
         // we'll modify them from there
-        int n = sources[0].produce(min,max,subpopulation,inds, state,thread, misc);
+        int n = sources[0].produce(min,max,start,subpopulation,inds,state,thread);
+
 
         // should we bother?
         if (!state.random[thread].nextBoolean(likelihood))
-            {
-            return n;
-            }
+            return reproduce(n, start, subpopulation, inds, state, thread, false);  // DON'T produce children from source -- we already did
+
+
+        // clone the individuals if necessary -- if our source is a BreedingPipeline
+        // they've already been cloned, but if the source is a SelectionMethod, the
+        // individuals are actual individuals from the previous population
+        if (!(sources[0] instanceof BreedingPipeline))
+            for(int q=start;q<n+start;q++)
+                inds[q] = (Individual)(inds[q].clone());
 
         // Check to make sure that the individuals are IntegerVectorIndividuals and
         // grab their species.  For efficiency's sake, we assume that all the 
@@ -73,15 +76,15 @@ public class OurMutatorPipeline extends BreedingPipeline
         // share the same common species -- this is a safe assumption because they're 
         // all breeding from the same subpopulation.
 
-        if (!(inds.get(start) instanceof IntegerVectorIndividual)) // uh oh, wrong kind of individual
+        if (!(inds[start] instanceof IntegerVectorIndividual)) // uh oh, wrong kind of individual
             state.output.fatal("OurMutatorPipeline didn't get an IntegerVectorIndividual." +
-                "The offending individual is in subpopulation " + subpopulation + " and it's:" + inds.get(start));
-        IntegerVectorSpecies species = (IntegerVectorSpecies)(inds.get(start).species);
+                "The offending individual is in subpopulation " + subpopulation + " and it's:" + inds[start]);
+        IntegerVectorSpecies species = (IntegerVectorSpecies)(inds[start].species);
 
         // mutate 'em!
         for(int q=start;q<n+start;q++)
             {
-            IntegerVectorIndividual i = (IntegerVectorIndividual)inds.get(q);
+            IntegerVectorIndividual i = (IntegerVectorIndividual)inds[q];
             for(int x=0;x<i.genome.length;x++)
                 if (state.random[thread].nextBoolean(species.mutationProbability(x)))
                     i.genome[x] = -i.genome[x];

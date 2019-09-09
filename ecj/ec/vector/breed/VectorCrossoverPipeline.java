@@ -11,10 +11,6 @@ import ec.vector.*;
 import ec.*;
 import ec.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
 /* 
  * VectorCrossoverPipeline.java
  * 
@@ -57,20 +53,14 @@ public class VectorCrossoverPipeline extends BreedingPipeline
     public static final String P_TOSS = "toss";
     public static final String P_CROSSOVER = "xover";
     public static final int NUM_SOURCES = 2;
-    public static final String KEY_PARENTS = "parents";
 
     /** Should the pipeline discard the second parent after crossing over? */
     public boolean tossSecondParent;
 
     /** Temporary holding place for parents */
-    ArrayList<Individual> parents;
+    VectorIndividual parents[];
 
-    public VectorCrossoverPipeline() 
-        {
-        // by Ermo. get rid of asList
-        //parents = new ArrayList<Individual>(Arrays.asList(new VectorIndividual[2]));;
-        parents = new ArrayList<Individual>();
-        }
+    public VectorCrossoverPipeline() { parents = new VectorIndividual[2]; }
     public Parameter defaultBase() { return VectorDefaults.base().push(P_CROSSOVER); }
 
     /** Returns 2 */
@@ -81,7 +71,7 @@ public class VectorCrossoverPipeline extends BreedingPipeline
         VectorCrossoverPipeline c = (VectorCrossoverPipeline)(super.clone());
 
         // deep-cloned stuff
-        c.parents = new ArrayList<Individual>(parents);
+        c.parents = (VectorIndividual[]) parents.clone();
 
         return c;
         }
@@ -101,56 +91,45 @@ public class VectorCrossoverPipeline extends BreedingPipeline
         return (tossSecondParent? minChildProduction(): minChildProduction()*2);
         }
 
-    public int produce(final int min,
-        final int max,
+    public int produce(final int min, 
+        final int max, 
+        final int start,
         final int subpopulation,
-        final ArrayList<Individual> inds,
+        final Individual[] inds,
         final EvolutionState state,
-        final int thread, HashMap<String, Object> misc)
+        final int thread) 
 
         {
-        int start = inds.size();
-        
         // how many individuals should we make?
         int n = typicalIndsProduced();
         if (n < min) n = min;
         if (n > max) n = max;
-        
-        IntBag[] parentparents = null;
-        IntBag[] preserveParents = null;
-
-        if (misc!=null && misc.containsKey(KEY_PARENTS))
-            {
-            preserveParents = (IntBag[])misc.get(KEY_PARENTS);
-            parentparents = new IntBag[2];
-            misc.put(KEY_PARENTS, parentparents);
-            }
-        
-        // should we use them straight?
+                
+        // should we bother?
         if (!state.random[thread].nextBoolean(likelihood))
-            {
-            // just load from source 0 and clone 'em
-            sources[0].produce(n,n,subpopulation,inds, state,thread,misc);
-            return n;
-            }
-
+            return reproduce(n, start, subpopulation, inds, state, thread, true);  // DO produce children from source -- we've not done so already
 
         for(int q=start;q<n+start; /* no increment */)  // keep on going until we're filled up
             {
-            parents.clear();
-            
             // grab two individuals from our sources
             if (sources[0]==sources[1])  // grab from the same source
                 {
-                sources[0].produce(2,2,subpopulation, parents, state,thread, misc);
+                sources[0].produce(2,2,0,subpopulation,parents,state,thread);
+                if (!(sources[0] instanceof BreedingPipeline))  // it's a selection method probably
+                    { 
+                    parents[0] = (VectorIndividual)(parents[0].clone());
+                    parents[1] = (VectorIndividual)(parents[1].clone());
+                    }
                 }
             else // grab from different sources
                 {
-                sources[0].produce(1,1,subpopulation, parents, state,thread, misc);
-                sources[1].produce(1,1,subpopulation, parents, state,thread, misc);
+                sources[0].produce(1,1,0,subpopulation,parents,state,thread);
+                sources[1].produce(1,1,1,subpopulation,parents,state,thread);
+                if (!(sources[0] instanceof BreedingPipeline))  // it's a selection method probably
+                    parents[0] = (VectorIndividual)(parents[0].clone());
+                if (!(sources[1] instanceof BreedingPipeline)) // it's a selection method probably
+                    parents[1] = (VectorIndividual)(parents[1].clone());
                 }
-            
-            
                 
             // at this point, parents[] contains our two selected individuals,
             // AND they're copied so we own them and can make whatever modifications
@@ -158,38 +137,19 @@ public class VectorCrossoverPipeline extends BreedingPipeline
     
             // so we'll cross them over now.  Since this is the default pipeline,
             // we'll just do it by calling defaultCrossover on the first child
-
             
-            ((VectorIndividual)(parents.get(0))).defaultCrossover(state,thread,((VectorIndividual)(parents.get(1))));
-            parents.get(0).evaluated=false;
-            parents.get(1).evaluated=false;
-            
+            parents[0].defaultCrossover(state,thread,parents[1]);
+            parents[0].evaluated=false;
+            parents[1].evaluated=false;
             
             // add 'em to the population
-            // by Ermo. this should use add instead of set, because the inds is empty, so will throw index out of bounds
-            // okay -- Sean
-            inds.add(parents.get(0));
-            if (preserveParents != null)
-                {
-                parentparents[0].addAll(parentparents[1]);
-                preserveParents[q] = parentparents[0];
-                }
+            inds[q] = parents[0];
             q++;
             if (q<n+start && !tossSecondParent)
                 {
-                // by Ermo. as as here, see the comments above
-                inds.add(parents.get(1));
-                if (preserveParents != null)
-                    {
-                    preserveParents[q] = new IntBag(parentparents[0]);
-                    }
+                inds[q] = parents[1];
                 q++;
                 }
-            }
-        
-        if (preserveParents != null)
-            {
-            misc.put(KEY_PARENTS, preserveParents);
             }
         return n;
         }

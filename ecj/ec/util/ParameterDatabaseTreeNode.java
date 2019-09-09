@@ -13,7 +13,6 @@
 package ec.util;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -111,13 +110,10 @@ class ParameterDatabaseTreeNode
     public void sort(Comparator comp) {
         if (children == null) 
             return;
-//                by Ermo. get rid of asList, if sorting is the purpose, no need to convert this.       
-//        Object[] childArr = children.toArray();
-//        Arrays.sort(childArr, comp);
-//        children = new Vector(Arrays.asList(childArr));
-// Do we have Collections.sort in 1.5?  1.6?  Sean
-        Collections.sort(children, comp);
         
+        Object[] childArr = children.toArray();
+        Arrays.sort(childArr, comp);
+        children = new Vector(Arrays.asList(childArr));
         
         Enumeration e = children.elements();
         while (e.hasMoreElements()) {

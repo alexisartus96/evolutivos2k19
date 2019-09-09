@@ -7,9 +7,11 @@
 package ec.multiobjective;
 
 import java.util.ArrayList;
-
+import java.util.Arrays;
 import ec.EvolutionState;
 import ec.Individual;
+import ec.Subpopulation;
+import ec.multiobjective.MultiObjectiveFitness;
 import ec.simple.SimpleStatistics;
 import ec.util.*;
 import java.io.*;
@@ -91,13 +93,13 @@ public class MultiObjectiveStatistics extends SimpleStatistics
         bypassFinalStatistics(state, result);  // just call super.super.finalStatistics(...)
 
         if (doFinal) state.output.println("\n\n\n PARETO FRONTS", statisticslog);
-        for (int s = 0; s < state.population.subpops.size(); s++)
+        for (int s = 0; s < state.population.subpops.length; s++)
             {
-            MultiObjectiveFitness typicalFitness = (MultiObjectiveFitness)(state.population.subpops.get(s).individuals.get(0).fitness);
+            MultiObjectiveFitness typicalFitness = (MultiObjectiveFitness)(state.population.subpops[s].individuals[0].fitness);
             if (doFinal) state.output.println("\n\nPareto Front of Subpopulation " + s, statisticslog);
 
             // build front
-            ArrayList front = typicalFitness.partitionIntoParetoFront(state.population.subpops.get(s).individuals, null, null);
+            ArrayList front = typicalFitness.partitionIntoParetoFront(state.population.subpops[s].individuals, null, null);
 
             // sort by objective[0]
             Object[] sortedFront = front.toArray();
@@ -124,7 +126,7 @@ public class MultiObjectiveStatistics extends SimpleStatistics
             // write short version of front out to disk
             if (!silentFront)
                 {
-                if (state.population.subpops.size() > 1)
+                if (state.population.subpops.length > 1)
                     state.output.println("Subpopulation " + s, frontLog);
                 for (int i = 0; i < sortedFront.length; i++)
                     {

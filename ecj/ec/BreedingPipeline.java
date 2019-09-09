@@ -7,11 +7,7 @@
 
 package ec;
 import ec.util.*;
-
-import java.util.ArrayList;
-
 import ec.steadystate.*;
-import java.util.HashMap;
 
 /* 
  * BreedingPipeline.java
@@ -48,7 +44,7 @@ import java.util.HashMap;
  user parameter instead.)</td></tr>
 
  <tr><td valign=top><i>base</i>.<tt>source.</tt><i>n</i><br>
- <font size=-1>classname, inherits and != BreedingSource, or the value <tt>same</tt>, or the value <tt>stub</tt><br>
+ <font size=-1>classname, inherits and != BreedingSource, or the value <tt>same</tt><br>
  <td valign=top>(Source <i>n</i> for this BreedingPipeline.
  If the value is set to <tt>same</tt>, then this source is the
  exact same source object as <i>base</i>.<tt>source.</tt><i>n-1</i>, and
@@ -72,23 +68,26 @@ public abstract class BreedingPipeline extends BreedingSource implements SteadyS
     {
     /** Indicates that a source is the exact same source as the previous source. */
     public static final String V_SAME = "same";
-    
-    /** Indicates that the source will be filled later via a call to setStubs(). */
-    public static final String V_STUB = "stub";
 
     /** Indicates the probability that the Breeding Pipeline will perform its mutative action instead of just doing reproduction. */
     public static final String P_LIKELIHOOD = "likelihood";
 
-    /** Indicates that the number of sources is not hard coded but is determined by the user in the parameter file. */
+    /** Indicates that the number of sources is variable and determined by the
+        user in the parameter file. */
+
     public static final int DYNAMIC_SOURCES = -1;
 
-    /** Standard parameter for number of sources (only used if numSources returns DYNAMIC_SOURCES) */
+    /** Standard parameter for number of sources (only used if numSources
+        returns DYNAMIC_SOURCES */
+
     public static final String P_NUMSOURCES = "num-sources";
 
     /** Standard parameter for individual-selectors associated with a BreedingPipeline */
     public static final String P_SOURCE = "source";
 
-    /** My parameter base -- I keep it around so I can print some messages that are useful with it (not deep cloned) */
+    /** My parameter base -- I keep it around so I can print some messages that
+        are useful with it (not deep cloned) */
+        
     public Parameter mybase;
 
     public double likelihood;
@@ -131,21 +130,6 @@ public abstract class BreedingPipeline extends BreedingSource implements SteadyS
         return max;
         }
 
-    public void fillStubs(final EvolutionState state, BreedingSource source)
-        {
-        for(int x=0;x<sources.length;x++)
-            {
-            if (sources[x] == null) // fill the stub
-                {
-                if (source == null)
-                    state.output.fatal("BreedingPipeline needed to fill a stub, but no BreedingSource was provided to fill it.\n" +
-                        "This is probably because no parent pipeline was a StubPipeline.");
-                sources[x] = source;
-                }
-            else
-                sources[x].fillStubs(state, source);
-            }
-        }
 
     /** Returns the "typical" number of individuals produced -- by default
         this is the minimum typical number of individuals produced by any
@@ -205,11 +189,7 @@ public abstract class BreedingPipeline extends BreedingSource implements SteadyS
                 // else the source is the same source as before
                 sources[x] = sources[x-1];
                 }
-            else if (s != null && s.equals(V_STUB))
-                {
-                sources[x] = null;
-                }
-            else
+            else 
                 {
                 sources[x] = (BreedingSource)
                     (state.parameters.getInstanceForParameter(
@@ -234,11 +214,7 @@ public abstract class BreedingPipeline extends BreedingSource implements SteadyS
 
         for(int x=0;x<sources.length;x++)
             {
-            if (sources[x] == null) // a stub
-                {
-                // do nothing
-                }
-            else if (x==0 || sources[x] != sources[x-1])  // not "same"
+            if (x==0 || sources[x]!=sources[x-1])
                 c.sources[x] = (BreedingSource)(sources[x].clone());
             else 
                 c.sources[x] = c.sources[x-1];
@@ -246,6 +222,24 @@ public abstract class BreedingPipeline extends BreedingSource implements SteadyS
 
         return c;
         }
+
+    /** Performs direct cloning of n individuals.  if produceChildrenFromSource is true, then */
+    public int reproduce(final int n, 
+        final int start,
+        final int subpopulation,
+        final Individual[] inds,
+        final EvolutionState state,
+        final int thread,
+        boolean produceChildrenFromSource) 
+        {
+        if (produceChildrenFromSource)
+            sources[0].produce(n,n,start,subpopulation,inds,state,thread);
+        if (sources[0] instanceof SelectionMethod)
+            for(int q=start; q < n+start; q++)
+                inds[q] = (Individual)(inds[q].clone());
+        return n;
+        }
+
 
     public boolean produces(final EvolutionState state,
         final Population newpop,
@@ -264,16 +258,8 @@ public abstract class BreedingPipeline extends BreedingSource implements SteadyS
         final int thread)
         {
         for(int x=0;x<sources.length;x++) 
-            {
-            if (sources[x] == null)  // uh oh
-                {
-                state.output.fatal("Stub not filled in Breeding Pipeline.");
-                }
-            if (x==0 || sources[x] != sources[x-1])
-                {
+            if (x==0 || sources[x]!=sources[x-1])
                 sources[x].prepareToProduce(state,subpopulation,thread);
-                }
-            }
         }
 
     public void finishProducing(final EvolutionState state,

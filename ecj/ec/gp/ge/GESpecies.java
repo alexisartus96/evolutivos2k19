@@ -494,11 +494,8 @@ public class GESpecies extends IntegerVectorSpecies
 
             // ERC was found inside the arraylist
             if (dummy.nodeEquivalentTo(node))
-                {
-                if (ercMapsForFancyPrint != null) 
-                    ercMapsForFancyPrint.put(new Integer(genomeVal), dummy);                              
-                return dummy.lightClone();
-                }
+                if (ercMapsForFancyPrint != null) ercMapsForFancyPrint.put(new Integer(genomeVal), dummy);                              
+            return dummy.lightClone();
             }
 
         // erc was not found in the array list lets make one

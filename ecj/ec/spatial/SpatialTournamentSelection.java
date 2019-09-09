@@ -111,10 +111,10 @@ public class SpatialTournamentSelection extends TournamentSelection
 
     public int getRandomIndividual(int number, int subpopulation, EvolutionState state, int thread)
         {
-        Subpopulation subpop = state.population.subpops.get(subpopulation);
+        Subpopulation subpop = state.population.subpops[subpopulation];
         if (!(subpop instanceof Space))
             state.output.fatal( "Subpopulation "+subpopulation+" is not a spatially-embedded subpopulation.\n");
-        Space space = (Space)(state.population.subpops.get(subpopulation));
+        Space space = (Space)(state.population.subpops[subpopulation]);
         int index = space.getIndex(thread);
                 
         if (number==0 && indCompetes)           // Should we just return the individual?

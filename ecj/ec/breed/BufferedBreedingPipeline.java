@@ -9,10 +9,6 @@ package ec.breed;
 import ec.*;
 import ec.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-
 /* 
  * BufferedBreedingPipeline.java
  * 
@@ -70,8 +66,8 @@ public class BufferedBreedingPipeline extends BreedingPipeline
     public static final int INDS_PRODUCED = 1;
     public static final int NUM_SOURCES = 1;
 
-    public ArrayList<Individual> buffer;
-    public int bufSize;
+    public Individual[] buffer;
+    public int currentSize;
 
     public Parameter defaultBase()
         {
@@ -87,12 +83,13 @@ public class BufferedBreedingPipeline extends BreedingPipeline
 
         Parameter def = defaultBase();
 
-        bufSize = state.parameters.getInt(base.push(P_BUFSIZE),
+        int bufsize = state.parameters.getInt(base.push(P_BUFSIZE),
             def.push(P_BUFSIZE),1);
-        if (bufSize == 0)
+        if (bufsize == 0)
             state.output.fatal("BufferedBreedingPipeline's number of individuals must be >= 1.",base.push(P_BUFSIZE),def.push(P_BUFSIZE));
         
-        buffer = new ArrayList<Individual>();
+        buffer = new Individual[bufsize];
+        currentSize=0; // just in case 
 
         // declare that likelihood isn't used
         if (likelihood < 1.0)
@@ -107,26 +104,35 @@ public class BufferedBreedingPipeline extends BreedingPipeline
         {
         super.prepareToProduce(state,subpopulation,thread);
         // reset my number of individuals to 0
-        buffer.clear();
+        currentSize=0;
         }
 
 
-    public int produce(final int min,
-        final int max,
+    public int produce(final int min, 
+        final int max, 
+        final int start,
         final int subpopulation,
-        final ArrayList<Individual> inds,
+        final Individual[] inds,
         final EvolutionState state,
-        final int thread, HashMap<String, Object> misc)
+        final int thread) 
 
         {
-        for(int q=0; q<min; q++ )
+        for(int q=start;q<min+start; q++ )
             {
-            if (buffer.isEmpty())       // reload
+            if (currentSize==0)         // reload
                 {
-                sources[0].produce(bufSize, bufSize, subpopulation, buffer, state, thread, misc);
+                sources[0].produce(buffer.length,buffer.length,
+                    0,subpopulation,buffer,state,thread);
+                currentSize=buffer.length;
+                
+                // clone if necessary
+                if (sources[0] instanceof SelectionMethod)
+                    for(int z=0; z < buffer.length; z++)
+                        buffer[z] = (Individual)(buffer[z].clone());
                 }
             
-            inds.add(buffer.remove(buffer.size() - 1));
+            inds[q] = buffer[currentSize-1];
+            currentSize--;
             }
         return min;
         }

@@ -8,7 +8,6 @@
 package ec;
 import ec.util.*;
 import java.io.*;
-import java.util.*;
 
 /* 
  * Species.java
@@ -50,8 +49,8 @@ import java.util.*;
  <td valign=top>(total number of breeding pipelines for the species)</td></tr>
 
  <tr><td valign=top><i>base</i>.<tt>pipe</tt><br>
- <font size=-1>classname, inherits and != ec.BreedingSource</font></td>
- <td valign=top>(the class for the prototypical Breeding Source)</td></tr>
+ <font size=-1>classname, inherits and != ec.BreedingPipeline</font></td>
+ <td valign=top>(the class for the prototypical Breeding Pipeline)</td></tr>
 
  </table>
 
@@ -62,7 +61,7 @@ import java.util.*;
  <td>i_prototype (the prototypical individual)</td></tr>
 
  <tr><td valign=top><i>base</i>.<tt>pipe</tt></td>
- <td>pipe_prototype (breeding source prototype)</td></tr>
+ <td>pipe_prototype (breeding pipeline prototype)</td></tr>
 
  <tr><td valign=top><i>base</i>.<tt>fitness</tt></td>
  <td>f_prototype (the prototypical fitness)</td></tr>
@@ -85,7 +84,7 @@ public abstract class Species implements Prototype
     public Individual i_prototype;
     
     /** The prototypical breeding pipeline for this species. */
-    public BreedingSource pipe_prototype;
+    public BreedingPipeline pipe_prototype;
 
     /** The prototypical fitness for individuals of this species. */
     public Fitness f_prototype;    
@@ -97,19 +96,13 @@ public abstract class Species implements Prototype
             Species myobj = (Species) (super.clone());
             myobj.i_prototype = (Individual) i_prototype.clone();
             myobj.f_prototype = (Fitness) f_prototype.clone();
-            myobj.pipe_prototype = (BreedingSource) pipe_prototype.clone();
+            myobj.pipe_prototype = (BreedingPipeline) pipe_prototype.clone();
             return myobj;
             }
         catch (CloneNotSupportedException e)
             { throw new InternalError(); } // never happens
         } 
-        
-    /** Called whenever the Breeder calls produce(...) on a BreedingPipeline, in order to pass
-        a new "misc" object.  Customize this as you see fit: the default just builds an empty hashmap. */
-    public HashMap<String, Object> buildMisc(EvolutionState state, int subpopIndex, int thread)
-        {
-        return new HashMap<String,Object>();
-        }
+
    
     /** Provides a brand-new individual to fill in a population.  The default form
         simply calls clone(), creates a fitness, sets evaluated to false, and sets
@@ -148,7 +141,7 @@ public abstract class Species implements Prototype
         throws IOException
         {
         Individual newind = (Individual)(i_prototype.clone());
-        
+                
         // Set the fitness
         newind.fitness = (Fitness)(f_prototype.clone());
         newind.evaluated = false; // for sanity's sake, though it's a useless line
@@ -191,8 +184,8 @@ public abstract class Species implements Prototype
         // and we're ready!
         return newind;  
         }
-        
-        
+
+
     /** The default version of setup(...) loads requested pipelines and calls setup(...) on them and normalizes their probabilities.  
         If your individual prototype might need to know special things about the species (like parameters stored in it),
         then when you override this setup method, you'll need to set those parameters BEFORE you call super.setup(...),
@@ -205,9 +198,9 @@ public abstract class Species implements Prototype
         Parameter def = defaultBase();
 
         // load the breeding pipeline
-        pipe_prototype = (BreedingSource)(
+        pipe_prototype = (BreedingPipeline)(
             state.parameters.getInstanceForParameter(
-                base.push(P_PIPE),def.push(P_PIPE),BreedingSource.class));
+                base.push(P_PIPE),def.push(P_PIPE),BreedingPipeline.class));
         pipe_prototype.setup(state,base.push(P_PIPE));
 
         // I promised over in BreedingSource.java that this method would get called.

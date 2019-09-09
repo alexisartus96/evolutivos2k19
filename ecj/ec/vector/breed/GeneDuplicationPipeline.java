@@ -9,11 +9,9 @@ package ec.vector.breed;
 import ec.BreedingPipeline;
 import ec.EvolutionState;
 import ec.Individual;
+import ec.SelectionMethod;
 import ec.util.Parameter;
 import ec.vector.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * <p>GeneDuplicationPipeline is designed to duplicate a sequence of genes from the chromosome and append
@@ -43,32 +41,34 @@ public class GeneDuplicationPipeline extends BreedingPipeline
 
     public int numSources() { return NUM_SOURCES; }
 
-    public int produce(int min,
-        int max,
+    public int produce(int min, 
+        int max, 
+        int start, 
         int subpopulation,
-        ArrayList<Individual> inds,
-        EvolutionState state,
-        int thread, HashMap<String, Object> misc)
+        Individual[] inds, 
+        EvolutionState state, 
+        int thread) 
         {
-        int start = inds.size();
-                
+
         // grab individuals from our source and stick 'em right into inds.
         // we'll modify them from there
-        int n = sources[0].produce(min,max,subpopulation,inds, state,thread, misc);
+        int n = sources[0].produce(min,max,start,subpopulation,inds,state,thread);
 
 
         // should we bother?
         if (!state.random[thread].nextBoolean(likelihood))
-            {
-            return n;
-            }
+            return reproduce(n, start, subpopulation, inds, state, thread, false);  // DON'T produce children from source -- we already did
+
 
         // now let's mutate 'em
         for(int q=start; q < n+start; q++)
             {
+            if (sources[0] instanceof SelectionMethod)
+                inds[q] = (Individual)(inds[q].clone());
+
             //duplicate from the genome between a random begin and end point,
             //and put that at the end of the new genome.
-            VectorIndividual ind = (VectorIndividual)(inds.get(q));
+            VectorIndividual ind = (VectorIndividual)(inds[q]);
             
             int len = ind.genomeLength();
 

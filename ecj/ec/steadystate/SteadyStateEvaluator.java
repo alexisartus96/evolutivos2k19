@@ -94,7 +94,7 @@ public class SteadyStateEvaluator extends SimpleEvaluator
         returned. Once an individual is returned by this function, no other individual will
         be returned until the system is ready to provide us with another one.  NULL will
         be returned otherwise.  */
-    public Individual getNextEvaluatedIndividual(EvolutionState state)
+    public Individual getNextEvaluatedIndividual()
         {
         QueueIndividual qind = null;
         
@@ -111,7 +111,6 @@ public class SteadyStateEvaluator extends SimpleEvaluator
         if (qind == null) return null;
         
         subpopulationBeingEvaluated = qind.subpop;
-        state.incrementEvaluations(1);
         return qind.ind;
         }
     
@@ -126,9 +125,11 @@ public class SteadyStateEvaluator extends SimpleEvaluator
         each individual in each population if he's optimal; if he 
         finds an individual somewhere that's optimal,
         he signals that the run is complete. */
-    public boolean isIdealFitness(final EvolutionState state, final Individual ind)
+    public boolean runComplete(final EvolutionState state, final Individual ind)
         {
-        return (ind.fitness.isIdealFitness());
+        if (ind.fitness.isIdealFitness())
+            return true;
+        return false;
         }
 
     }

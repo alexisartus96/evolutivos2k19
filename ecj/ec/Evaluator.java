@@ -67,16 +67,10 @@ public abstract class Evaluator implements Singleton
         as this is a very domain-specific thing. */
     public abstract void evaluatePopulation(final EvolutionState state);
 
-    /** Returns non-NULL if the Evaluator believes that the run is
-        finished: perhaps an ideal individual has been found or some
+    /** Returns true if an ideal individual has been found or some
         other run result has shortcircuited the run so that it should
-        end prematurely right now.  Typically a message is stored in
-        the String for the user to know why the system shut down.*/
-    public abstract String runComplete(final EvolutionState state);
-
-    public String runComplete;
-    /** Requests that the Evaluator quit soon for a user-defined reason provided in the message. */
-    public void setRunComplete(String message) { runComplete = message; }
+        end prematurely right now. */
+    public abstract boolean runComplete(final EvolutionState state);
 
     public void setup(final EvolutionState state, final Parameter base)
         {

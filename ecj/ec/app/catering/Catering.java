@@ -37,7 +37,7 @@ public class Catering extends Problem implements SimpleProblemForm
         //Asigno el fitness al individuo
         if (!(ind2.fitness instanceof SimpleFitness))
             state.output.fatal("Error. No es un SimpleFitness",null);
-        ((SimpleFitness)ind2.fitness).setFitness(state,fitness, fitness > 9999);
+        ((SimpleFitness)ind2.fitness).setFitness(state,fitness, fitness > 9999999);
         ind2.evaluated = true;
         }
     }

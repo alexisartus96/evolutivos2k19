@@ -43,8 +43,6 @@ import javax.swing.table.DefaultTableModel;
 import ec.EvolutionState;
 import ec.Evolve;
 import ec.util.Parameter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 /**
  * @author spaus
@@ -305,18 +303,6 @@ public class ControlPanel extends JPanel
                         }
                     }
                 });
-            numGensField.addFocusListener(new FocusListener()
-                {
-                public void focusGained(final FocusEvent e)
-                    {
-                    }
-
-                public void focusLost(final FocusEvent e)
-                    {
-                    console.parameters.set(new Parameter(EvolutionState.P_GENERATIONS), ((JTextField)e.getSource()).getText());
-                    resizeSeedTable();
-                    }
-                });
             }
         return numGensField;
         }
@@ -360,18 +346,6 @@ public class ControlPanel extends JPanel
                         {
                         resizeSeedTable();
                         }
-                    }
-                });
-            
-            numJobsField.addFocusListener(new FocusListener()
-                {
-                public void focusGained(final FocusEvent e)
-                    {
-                    }
-
-                public void focusLost(final FocusEvent e)
-                    {
-                    resizeSeedTable();
                     }
                 });
             }
@@ -439,22 +413,18 @@ public class ControlPanel extends JPanel
             {
             int seed;
             int i = 0;
-            try 
+            for (int thread = 0; thread < numThreads; ++thread) 
                 {
-                for (int thread = 0; thread < numThreads; ++thread) 
+                try 
                     {
                     seed = console.parameters.getInt(new Parameter("seed."+thread),null);
-                    for (int job = 0; job < numJobs; ++job)
-                        setSeed(""+(seed+(i++)),job,thread);
                     }
-                }
-            catch (NumberFormatException ex) 
-                {
-                javax.swing.JOptionPane.showMessageDialog(null, "The seed parameter for at least one thread not a fixed number (perhaps it's set to 'time'?), so sequential seeds cannot be used.\n"
-                        + "Reverting to random number seeds for all threads.", "Adjusting Seeds", 
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                randomSeedsRadioButton.setSelected(true);
-                generateRandomSeeds();
+                catch (NumberFormatException ex) 
+                    {
+                    seed = getSeed(0,thread-1)+1;
+                    }
+                for (int job = 0; job < numJobs; ++job)
+                    setSeed(""+(seed+(i++)),job,thread);
                 }
             }
         else
@@ -476,10 +446,8 @@ public class ControlPanel extends JPanel
         throws NumberFormatException 
         {
         int numJobs = Integer.parseInt(numJobsField.getText());
-        int evalThreads = console.parameters.getInt(new Parameter(Evolve.P_EVALTHREADS),null);
-        int breedThreads = console.parameters.getInt(new Parameter(Evolve.P_BREEDTHREADS),null);
-        assert(evalThreads == getThreadCount(evalThreadsField.getText()));
-        assert(breedThreads == getThreadCount(breedThreadsField.getText()));
+        int breedThreads = getThreadCount(breedThreadsField.getText());
+        int evalThreads = getThreadCount(evalThreadsField.getText());
         int numThreads = Math.max(breedThreads, evalThreads);
         
         int seed = (int)(System.currentTimeMillis());
@@ -498,7 +466,8 @@ public class ControlPanel extends JPanel
         try { return Integer.parseInt((String)seedsTable.getValueAt(experimentNum, threadNum)); }
         catch (RuntimeException e)
             {
-            javax.swing.JOptionPane.showMessageDialog(null, "Error reading from seed table. Rebuilding random number seeds.", "Adjusting Seeds", 
+            javax.swing.JOptionPane.showMessageDialog(null, "Value of seed for experiment " + experimentNum + 
+                " and thread " + threadNum + " not a fixed number: probably 'time'.  Rebuilding random number seeds.", "Adjusting Seeds", 
                 javax.swing.JOptionPane.INFORMATION_MESSAGE);
             generateRandomSeeds();
             return Integer.valueOf((String)seedsTable.getValueAt(experimentNum, threadNum)).intValue();
@@ -534,18 +503,6 @@ public class ControlPanel extends JPanel
                         }
                     }
                 });
-            evalThreadsField.addFocusListener(new FocusListener()
-                {
-                public void focusGained(final FocusEvent e)
-                    {
-                    }
-
-                public void focusLost(final FocusEvent e)
-                    {
-                    console.parameters.set(new Parameter(Evolve.P_EVALTHREADS), ((JTextField)e.getSource()).getText());
-                    resizeSeedTable();
-                    }
-                });
             }
         return evalThreadsField;
         }
@@ -572,19 +529,6 @@ public class ControlPanel extends JPanel
                         {
                         ((JTextField)e.getSource()).setText(console.parameters.getString(new Parameter(Evolve.P_BREEDTHREADS),null));
                         }
-                    }
-                });
-            
-            breedThreadsField.addFocusListener(new FocusListener()
-                {
-                public void focusGained(final FocusEvent e)
-                    {
-                    }
-
-                public void focusLost(final FocusEvent e)
-                    {
-                    console.parameters.set(new Parameter(Evolve.P_BREEDTHREADS), ((JTextField)e.getSource()).getText());
-                    resizeSeedTable();
                     }
                 });
             }
@@ -952,18 +896,6 @@ public class ControlPanel extends JPanel
                         }
                     }
                 });
-            
-            checkpointModuloField.addFocusListener(new FocusListener()
-                {
-                public void focusGained(final FocusEvent e)
-                    {
-                    }
-
-                public void focusLost(final FocusEvent e)
-                    {
-                    console.parameters.set(new Parameter(EvolutionState.P_CHECKPOINTMODULO), ((JTextField)e.getSource()).getText());
-                    }
-                });
             }
         return checkpointModuloField;
         }
@@ -990,18 +922,6 @@ public class ControlPanel extends JPanel
                         {
                         ((JTextField)e.getSource()).setText(console.parameters.getString(new Parameter(EvolutionState.P_CHECKPOINTPREFIX),null));
                         }
-                    }
-                });
-            
-            prefixField.addFocusListener(new FocusListener()
-                {
-                public void focusGained(final FocusEvent e)
-                    {
-                    }
-
-                public void focusLost(final FocusEvent e)
-                    {
-                    console.parameters.set(new Parameter(EvolutionState.P_CHECKPOINTPREFIX), ((JTextField)e.getSource()).getText());
                     }
                 });
             }

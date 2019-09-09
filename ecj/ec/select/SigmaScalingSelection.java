@@ -89,10 +89,8 @@ public class SigmaScalingSelection extends FitProportionateSelection
         final int subpopulation,
         final int thread)
         {
-        super.prepareToProduce(s, subpopulation, thread);
-
         // load fitnesses
-        fitnesses = new double[s.population.subpops.get(subpopulation).individuals.size()];
+        fitnesses = new double[s.population.subpops[subpopulation].individuals.length];
         
         double sigma;
         double meanFitness;
@@ -101,7 +99,7 @@ public class SigmaScalingSelection extends FitProportionateSelection
                 
         for(int x=0;x<fitnesses.length;x++)
             {
-            fitnesses[x] = ((Individual)(s.population.subpops.get(subpopulation).individuals.get(x))).fitness.fitness();
+            fitnesses[x] = ((Individual)(s.population.subpops[subpopulation].individuals[x])).fitness.fitness();
             if (fitnesses[x] < 0) // uh oh
                 s.output.fatal("Discovered a negative fitness value.  SigmaScalingSelection requires that all fitness values be non-negative(offending subpopulation #" + subpopulation + ")");
             }
