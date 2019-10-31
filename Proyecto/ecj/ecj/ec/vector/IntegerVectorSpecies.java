@@ -103,6 +103,14 @@ public class IntegerVectorSpecies extends VectorSpecies
     {
 
     public final static String RUTA_GENERATOR = "ruta-generator";
+    
+    public final static String RUTA_TIEMPOS = "ruta-tiempos";
+
+    public final static String P_CANT_CAMIONES = "cant-camiones";
+    
+    public final static String P_CAPACIDAD_CAMION = "capacidad-camion";
+
+    public final static String P_CANT_CONTENEDORES = "cant-contenedores";
 
     public final static String P_MINGENE = "min-gene";
     public final static String P_MAXGENE = "max-gene";
@@ -169,36 +177,36 @@ public class IntegerVectorSpecies extends VectorSpecies
         genomes which have extended beyond the genome length.  */
     boolean mutationIsBoundedDefined;
 
-    /* Mozos */
-    protected double [] precios;
 
-    public double [] getPrecios() {
-        return precios;
+    /* Proyecto */
+    protected int cantCamiones;
+
+    public int getCantCamiones(){
+        return cantCamiones;
+    }
+    protected int cantContenedores;
+
+    public int getCantContenedores(){
+        return cantContenedores;
+    }
+    
+    protected int capacidadCamion;
+
+    public int getCapacidadCamion(){
+        return capacidadCamion;
     }
 
-    /* Catering */
-    protected int monto;
 
-    public int getMonto(){
-        return monto;
+    protected Double[][] tiempos;
+
+    public Double[][] getTiempos(){
+        return tiempos;
     }
-
-    protected int cant_tipos;
-
-    public int getCantTipos(){
-        return cant_tipos;
-    }
-
-    protected int cant_items;
-
-    public int getCantItems(){
-        return cant_items;
-    }
-
-    protected Double[][] distancias;
-
-    public Double[][] getDistancias(){
-        return distancias;
+    
+    protected int[] capacidadInicialContenedores;
+    
+    public int[] getCapacidadInicial(){
+    	return capacidadInicialContenedores;
     }
 
     public long maxGene(int gene)
@@ -281,25 +289,45 @@ public class IntegerVectorSpecies extends VectorSpecies
         mutationIsBounded = new boolean[genomeSize + 1];
         randomWalkProbability = new double[genomeSize + 1];
 
-        //Cargo el generador
-        distancias = new Double [831][831];
+        cantContenedores = state.parameters.getInt(base.push(P_CANT_CONTENEDORES), def.push(P_CANT_CONTENEDORES));
+        cantCamiones = state.parameters.getInt(base.push(P_CANT_CAMIONES), def.push(P_CANT_CAMIONES));
+        capacidadCamion = state.parameters.getInt(base.push(P_CAPACIDAD_CAMION), def.push(P_CAPACIDAD_CAMION));
 
         try{
+
+            //-----------CARGA DE CAPACIDADES INICIALES----------------------------
             String ruta_generator = state.parameters.getStringWithDefault(base.push(RUTA_GENERATOR), def.push(RUTA_GENERATOR), null);
             //System.out.println(ruta_limite_barrios);
             File fin = new File(ruta_generator);
             FileInputStream fis = new FileInputStream(fin);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            br.readLine();
+            System.out.println(cantContenedores);
+            
+            //Cargo el generador
+            tiempos = new Double [cantContenedores + 1][cantContenedores + 1];
+            capacidadInicialContenedores = new int[cantContenedores];
+            
+            for (int j = 0; j < cantContenedores; j++) {
+            	capacidadInicialContenedores[j]=Integer.parseInt(br.readLine());
+			}
+            
+            System.out.println("CARGA DE CAPACIDADES INICIAL EXITOSA");
 
-//            cant_items = Integer.parseInt(br.readLine());
-//            cant_tipos = Integer.parseInt(br.readLine());
+            br.close();
+            
+            //-----------CARGA DE TIEMPOS----------------------------
+            String ruta_tiempos = state.parameters.getStringWithDefault(base.push(RUTA_TIEMPOS), def.push(RUTA_TIEMPOS), null);
+            //System.out.println(ruta_limite_barrios);
+            fin = new File(ruta_tiempos);
+            fis = new FileInputStream(fin);
 
+            br = new BufferedReader(new InputStreamReader(fis));
             String line = null;
             String [] line_tokens=null;
-            int i = 0;
-            for (int j = 0; j < 831; j++) {
-            	for (int j2 = 0; j2 < 831; j2++) {
+            for (int j = 0; j < cantContenedores ; j++) {
+            	for (int j2 = 0; j2 < cantContenedores ; j2++) {
             		if(j!=j2) {
 	            		line=br.readLine();
 	            		line_tokens = line.split("\\*");
@@ -310,7 +338,7 @@ public class IntegerVectorSpecies extends VectorSpecies
 							jsonObj = new JSONObject(line_tokens[5]);
 							JSONArray jsonArray = (JSONArray) jsonObj.get("routes");
 							jsonObj = (JSONObject) jsonArray.get(0);
-							distancias[j][j2]=new Double(jsonObj.get("duration").toString());
+							tiempos[j][j2]=new Double(jsonObj.get("duration").toString());
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -318,12 +346,12 @@ public class IntegerVectorSpecies extends VectorSpecies
 							
 						}
             		}else {
-            			distancias[j][j]=0.0;
+            			tiempos[j][j]=0.0;
             		}
 				}
 				
 			}
-            System.out.println("CARGA EXITOSA");
+            System.out.println("CARGA DE TIEMPOS EXITOSA");
 
             br.close();
         }catch(IOException e){
