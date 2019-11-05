@@ -5,7 +5,7 @@ import ec.vector.*;
 
 public class Catering extends Problem implements SimpleProblemForm
     {
-	private static int DURACION_TURNO = 28800;
+	private static int DURACION_TURNO = 10000;
     public void evaluate(final EvolutionState state,
         final Individual ind,
         final int subpopulation,
@@ -15,7 +15,7 @@ public class Catering extends Problem implements SimpleProblemForm
         {
         if (ind.evaluated) return;
 
-        System.out.println("-----------------------------");
+//        System.out.println("-----------------------------");
         if (!(ind instanceof IntegerVectorIndividual))
             state.output.fatal("Error. No es un vector de enteros!",null);
         
@@ -33,34 +33,47 @@ public class Catering extends Problem implements SimpleProblemForm
         int tiempoCamion = DURACION_TURNO;
         int capacidadActual = CAPACIDAD_CAMION;
 
-        System.out.println(tiempos[ind2.genome[0]][ind2.genome[1]]);
+//        System.out.println(tiempos[ind2.genome[0]][ind2.genome[1]]);
         int fitness = 0;
+        try {
         while(cantCamiones > 0) {
         	tiempoCamion = DURACION_TURNO;
             capacidadActual = CAPACIDAD_CAMION;
-            //aca en el while despues le agregamos la distancia que le lelva desde el proximo hasta el felipe cardozo
+            //aca en el while despues le agregamos la distancia que le llelva desde el proximo hasta el felipe cardozo
+//            System.out.println(ind2);
         	while(indiceContenedor < cantCotenedores  && tiempoCamion > tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[indiceContenedor]]) {
-                System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
+//                System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
         		if(capacidadActual > capacidadesIniciales[indiceContenedor]) {
-                    System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
+//                    System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
         			tiempoCamion -= tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[indiceContenedor]];
-        			capacidadActual -= capacidadesIniciales[indiceContenedor];
-            		fitness += capacidadesIniciales[indiceContenedor];
+        			capacidadActual -= capacidadesIniciales[ind2.genome[indiceContenedor]];
+            		fitness += capacidadesIniciales[ind2.genome[indiceContenedor]];
             		indiceContenedor+=1;
 
         		}else {
         			//volvemos al felipe cardozo
-        			tiempoCamion -= 3000;
+        			tiempoCamion -= tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[cantCotenedores]];;
         			capacidadActual = CAPACIDAD_CAMION;
         			
         		}
 
-                System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
+//                System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
 
         	}
         	cantCamiones--;
         }
-        System.out.println("salgo del while");
+
+        }catch (Exception e) {
+        	System.out.println(indiceContenedor);
+        	System.out.println(cantCotenedores);
+        	System.out.println(tiempoCamion);
+        	System.out.println(ind2.genome[indiceContenedor-1]);
+        	System.out.println(ind2.genome[indiceContenedor]);
+        	System.out.println(tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[indiceContenedor]]);
+
+			e.printStackTrace();
+		}
+//        System.out.println("salgo del while");
         
         
         

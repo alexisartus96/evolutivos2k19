@@ -322,12 +322,12 @@ public class IntegerVectorSpecies extends VectorSpecies
             //System.out.println(ruta_limite_barrios);
             fin = new File(ruta_tiempos);
             fis = new FileInputStream(fin);
-
             br = new BufferedReader(new InputStreamReader(fis));
+            br.readLine();
             String line = null;
             String [] line_tokens=null;
-            for (int j = 0; j < cantContenedores ; j++) {
-            	for (int j2 = 0; j2 < cantContenedores ; j2++) {
+            for (int j = 0; j <= cantContenedores ; j++) {
+            	for (int j2 = 0; j2 <= cantContenedores ; j2++) {
             		if(j!=j2) {
 	            		line=br.readLine();
 	            		line_tokens = line.split("\\*");
