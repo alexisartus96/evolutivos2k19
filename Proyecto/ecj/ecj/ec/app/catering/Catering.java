@@ -51,8 +51,8 @@ public class Catering extends Problem implements SimpleProblemForm
             		indiceContenedor+=1;
 
         		}else {
-        			//volvemos al felipe cardozo
-        			tiempoCamion -= tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[cantCotenedores]];;
+                    //volvemos al felipe cardozo
+        			tiempoCamion -= tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[0]];
         			capacidadActual = CAPACIDAD_CAMION;
         			
         		}
@@ -69,7 +69,8 @@ public class Catering extends Problem implements SimpleProblemForm
         	System.out.println(tiempoCamion);
         	System.out.println(ind2.genome[indiceContenedor-1]);
         	System.out.println(ind2.genome[indiceContenedor]);
-        	System.out.println(tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[indiceContenedor]]);
+            System.out.println(tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[indiceContenedor]]);
+            System.out.println(capacidadesIniciales[indiceContenedor]);
 
 			e.printStackTrace();
 		}

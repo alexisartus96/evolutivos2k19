@@ -306,7 +306,7 @@ public class IntegerVectorSpecies extends VectorSpecies
             System.out.println(cantContenedores);
             
             //Cargo el generador
-            tiempos = new Double [cantContenedores + 1][cantContenedores + 1];
+            tiempos = new Double [cantContenedores][cantContenedores];
             capacidadInicialContenedores = new int[cantContenedores];
             
             for (int j = 0; j < cantContenedores; j++) {
@@ -326,13 +326,12 @@ public class IntegerVectorSpecies extends VectorSpecies
             br.readLine();
             String line = null;
             String [] line_tokens=null;
-            for (int j = 0; j <= cantContenedores ; j++) {
-            	for (int j2 = 0; j2 <= cantContenedores ; j2++) {
+            for (int j = 0; j < cantContenedores ; j++) {
+            	for (int j2 = 0; j2 < cantContenedores ; j2++) {
             		if(j!=j2) {
-	            		line=br.readLine();
-	            		line_tokens = line.split("\\*");
+                        line=br.readLine();
+                        line_tokens = line.split("\\*");
 						if(line_tokens.length>4) {
-						  	
 							JSONObject jsonObj;
 							try {
 							jsonObj = new JSONObject(line_tokens[5]);

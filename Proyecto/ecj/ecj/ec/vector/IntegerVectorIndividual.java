@@ -338,7 +338,7 @@ public class IntegerVectorIndividual extends VectorIndividual
         {
         IntegerVectorSpecies s = (IntegerVectorSpecies) species;
         for(int x=0;x<genome.length;x++)
-            genome[x] = randomValueFromClosedInterval((int)s.minGene(x), (int)s.maxGene(x), state.random[thread]);
+            genome[x] = x;
         }
 
     public int hashCode()
