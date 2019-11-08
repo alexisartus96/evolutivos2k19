@@ -16,7 +16,6 @@ import java.awt.Color;
 
 import javax.swing.JTabbedPane;
 
-
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
@@ -72,7 +71,7 @@ public class StatisticsChartPane
             
             JFreeChart chart = chartStats.makeChart();
 
-            chart.setBackgroundPaint(Color.white);
+//            chart.setBackgroundPaint(Color.white);
             ChartPanel chartPanel = new ChartPanel(chart);
             StatisticsChartPaneTab chartPaneTab = new StatisticsChartPaneTab(chartPanel);
             this.addTab("Chart "+(numCharts++),chartPaneTab);

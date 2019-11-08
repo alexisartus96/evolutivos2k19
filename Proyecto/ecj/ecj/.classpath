@@ -3,5 +3,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="lib" path="/home/andres/Descargas/java-json.jar"/>
+	<classpathentry kind="lib" path="/home/andres/Descargas/jfreechart-1.0.19.zip"/>
+	<classpathentry kind="lib" path="/home/andres/Descargas/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="/home/andres/Descargas/com.lowagie.text-2.1.7.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

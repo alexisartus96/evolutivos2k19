@@ -134,10 +134,15 @@ public class IntegerVectorSpecies extends VectorSpecies
     public final static String V_RESET_MUTATION = "reset";
 
     public final static String V_RANDOM_WALK_MUTATION = "random-walk";
+    
+    public final static String V_PERM_MUTATION = "permutacion";
 
     public final static int C_RESET_MUTATION = 0;
 
     public final static int C_RANDOM_WALK_MUTATION = 1;
+    
+
+    public final static int C_PERM_MUTATION = 2;
 
     /** Min-gene value, per gene.
         This array is one longer than the standard genome length.
@@ -381,6 +386,8 @@ public class IntegerVectorSpecies extends VectorSpecies
             _mutationType = C_RESET_MUTATION; // redundant
         else if (mtype.equalsIgnoreCase(V_RANDOM_WALK_MUTATION))
             _mutationType = C_RANDOM_WALK_MUTATION;
+        else if (mtype.equalsIgnoreCase(V_PERM_MUTATION))
+            _mutationType = C_PERM_MUTATION;
         else
             state.output.fatal("IntegerVectorSpecies given a bad mutation type: "
                 + mtype, base.push(P_MUTATIONTYPE), def.push(P_MUTATIONTYPE));

@@ -37,9 +37,7 @@ public class BarChartStatistics
         }
     
     public JFreeChart makeChart(){
-        JFreeChart chart = ChartFactory.createBarChart(this.title,
-            this.xlabel,this.ylabel, this.dataset, PlotOrientation.VERTICAL,
-            false, true, false);
+        JFreeChart chart = new JFreeChart(null);
         
         return chart;
         }
@@ -48,7 +46,7 @@ public class BarChartStatistics
         {
         for (int i = 0; i < genes.length; i++)
             {
-            dataset.setValue(genes[i], "Genome "+seriesID, String.valueOf(i));
+//            dataset.setValue(genes[i], "Genome "+seriesID, String.valueOf(i));
             }
         }
     

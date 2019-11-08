@@ -10,6 +10,10 @@ package ec.vector;
 import ec.*;
 import ec.util.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /*
  * IntegerVectorIndividual.java
@@ -228,6 +232,83 @@ public class IntegerVectorIndividual extends VectorIndividual
                 }
             }
             break;
+            case VectorSpecies.C_PERMUTACION:
+//            	boolean[] marcados= new boolean[len];
+//            	boolean[] marcados2= new boolean[len];
+//            	System.out.println("hola");
+            	Integer[] posiciones_1= new Integer[len];
+            	Integer[] posiciones_2= new Integer[len];
+            	Integer[] print_1= new Integer[len];
+            	Integer[] print_2= new Integer[len];
+            	
+            	for (int j = 0; j < len; j++) {
+					posiciones_1[genome[j]]=j;
+					posiciones_2[i.genome[j]]=j;
+					print_1[j]=genome[j];
+					print_2[j]=i.genome[j];
+				}
+
+            	int n=len/2;  //numeros aleatorios
+                int k=len;  //auxiliar;
+                int[] numeros=new int[len];
+                Integer[] intercambios = new Integer[n];
+                Random rnd=new Random();
+                int res;
+                
+                
+                for(int j=0;j<len;j++){
+                    numeros[j]=j;
+                }
+                
+                for(int j=0;j<n;j++){
+                    res=rnd.nextInt(k);            
+                    intercambios[j]=numeros[res];
+                    numeros[res]=numeros[k-1];
+                    k--;
+                }
+                int valor_ind1=0;
+                int valor_ind2=0;
+                int aux=0;
+
+//                System.out.println("Padres");
+//                System.out.println(Arrays.toString(print_1));
+//                System.out.println(Arrays.toString(print_2));
+//
+//                System.out.println("Posiciones");
+//                System.out.println(Arrays.toString(posiciones_1));
+//                System.out.println(Arrays.toString(posiciones_2));
+                
+                for (int j = 0; j < intercambios.length; j++) {
+                	//guardo el valor temporalmente
+                	valor_ind1 = genome[intercambios[j]];
+                	valor_ind2 = i.genome[intercambios[j]];
+                	
+					genome[intercambios[j]] = valor_ind2;
+					i.genome[intercambios[j]] = valor_ind1;
+					
+					genome[posiciones_1[valor_ind2]] = valor_ind1;
+					i.genome[posiciones_2[valor_ind1]] = valor_ind2;
+
+					aux = posiciones_1[valor_ind1];
+					posiciones_1[valor_ind1] = posiciones_1[valor_ind2];
+					posiciones_1[valor_ind2] = aux;
+					
+					aux = posiciones_1[valor_ind1];
+					posiciones_2[valor_ind1] = posiciones_1[valor_ind2];
+					posiciones_2[valor_ind2] = aux;
+                }
+                for (int j = 0; j < len; j++) {
+					print_1[j]=genome[j];
+					print_2[j]=i.genome[j];
+				}
+//                System.out.println("intercambios");
+//
+//                System.out.println(Arrays.toString(intercambios));
+//
+//                System.out.println("hijos");
+//                System.out.println(Arrays.toString(print_1));
+//                System.out.println(Arrays.toString(print_2));
+            break;
             }
         }
 
@@ -321,6 +402,18 @@ public class IntegerVectorIndividual extends VectorIndividual
                                 }
                             while (state.random[thread].nextBoolean(s.randomWalkProbability(x)));
                             break;
+                        case IntegerVectorSpecies.C_PERM_MUTATION:
+                        	int random_value = randomValueFromClosedInterval((int)s.minGene(x), (int)s.maxGene(x), state.random[thread]);
+                        	boolean encontre=false;
+                        	int indice = 0;
+                        	while(!encontre) {
+                        		if(genome[indice]==random_value) {
+                        			encontre=true;
+                        		}else indice ++;
+                        	}
+                        	genome[x]= random_value;
+                        	genome[indice]= old;
+                        break;
                         default:
                             state.output.fatal("In IntegerVectorIndividual.defaultMutate, default case occurred when it shouldn't have");
                             break;
@@ -336,10 +429,41 @@ public class IntegerVectorIndividual extends VectorIndividual
     // notice that we bump to longs to avoid overflow errors
     public void reset(EvolutionState state, int thread)
         {
-        IntegerVectorSpecies s = (IntegerVectorSpecies) species;
-        for(int x=0;x<genome.length;x++)
-            genome[x] = x;
-        }
+//
+//        IntegerVectorSpecies s = (IntegerVectorSpecies) species;
+    	int n=genome.length;  //numeros aleatorios
+//        int k=n;  //auxiliar;
+//        int[] numeros=new int[n];
+        Integer[] print = new Integer[n];
+//        Random rnd=new Random();
+//        int res;
+//        
+//        
+//        for(int i=0;i<n;i++){
+//            numeros[i]=i;
+//        }
+//        
+//        for(int i=0;i<n;i++){
+//            res=rnd.nextInt(k);            
+//            genome[i]=numeros[res];
+//            print[i]=numeros[res];
+//            numeros[res]=numeros[k-1];
+//            k--;
+//             
+//        }
+    	List<Integer> list = new ArrayList<Integer>();
+    	for (int i = 0; i < genome.length; i++) {
+			list.add(i);
+		}
+    	java.util.Collections.shuffle(list);
+    	
+    	for (int i = 0; i < genome.length; i++) {
+			genome[i]=list.get(i);
+			print[i]=genome[i];
+		}
+    	
+//        System.out.println(Arrays.toString(print));
+       }
 
     public int hashCode()
         {

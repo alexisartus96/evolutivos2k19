@@ -2,11 +2,11 @@ parent.0		= ../../simple/simple.params
 eval.problem		= ec.app.catering.Catering
 state		= ec.simple.SimpleEvolutionState
 
-generations		= 300
+generations		= 1000
 quit-on-run-complete	= true
 
 # Defino las variables generales al problema
-pop.subpop.0.size =                     10000
+pop.subpop.0.size =                     10
 
 pop.subpop.0.species 		= ec.vector.IntegerVectorSpecies
 pop.subpop.0.species.fitness 	= ec.simple.SimpleFitness
@@ -24,10 +24,10 @@ stat		= ec.simple.SimpleStatistics
 exch		= ec.simple.SimpleExchanger
 
 pop.subpop.0.species.genome-size	= 54
-pop.subpop.0.species.crossover-type	= one
+pop.subpop.0.species.crossover-type	= permutacion
 pop.subpop.0.species.line-extension	= 1
-pop.subpop.0.species.mutation-type	= reset
-pop.subpop.0.species.mutation-prob	= 0.0
+pop.subpop.0.species.mutation-type	= permutacion
+pop.subpop.0.species.mutation-prob	= 0.5
 
 pop.subpop.0.species.pipe		     	= ec.vector.breed.VectorMutationPipeline
 pop.subpop.0.species.pipe.likelihood        	= 1.0

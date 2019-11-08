@@ -175,6 +175,7 @@ public class VectorSpecies extends Species
     public final static String V_ANY_POINT = "any";
     public final static String V_LINE_RECOMB = "line";
     public final static String V_INTERMED_RECOMB = "intermediate";
+    public final static String V_PERMUTACION = "permutacion";
     public final static String V_SIMULATED_BINARY = "sbx";
     public final static String P_CROSSOVER_DISTRIBUTION_INDEX = "crossover-distribution-index";
     public final static String P_MUTATIONPROB = "mutation-prob";
@@ -203,6 +204,7 @@ public class VectorSpecies extends Species
     public final static int C_LINE_RECOMB = 256;
     public final static int C_INTERMED_RECOMB = 512;
     public final static int C_SIMULATED_BINARY = 1024;
+    public final static int C_PERMUTACION = 2048;
     
     public final static int C_NONE = 0;
     public final static int C_GEOMETRIC = 1;
@@ -392,6 +394,8 @@ public class VectorSpecies extends Species
             crossoverType=C_INTERMED_RECOMB;
         else if (ctype.equalsIgnoreCase(V_SIMULATED_BINARY))
             crossoverType=C_SIMULATED_BINARY;
+        else if (ctype.equalsIgnoreCase(V_PERMUTACION))
+            crossoverType=C_PERMUTACION;
         else state.output.fatal("VectorSpecies given a bad crossover type: " + ctype,
             base.push(P_CROSSOVERTYPE),def.push(P_CROSSOVERTYPE));
     
