@@ -106,6 +106,10 @@ public class IntegerVectorSpecies extends VectorSpecies
     
     public final static String RUTA_TIEMPOS = "ruta-tiempos";
 
+    public final static String P_TIEMPO_PARADA= "tiempo-parada";
+    
+    public final static String P_DURACION_TURNO= "duracion-turno";
+
     public final static String P_CANT_CAMIONES = "cant-camiones";
     
     public final static String P_CAPACIDAD_CAMION = "capacidad-camion";
@@ -113,6 +117,7 @@ public class IntegerVectorSpecies extends VectorSpecies
     public final static String P_CANT_CONTENEDORES = "cant-contenedores";
 
     public final static String P_MINGENE = "min-gene";
+    
     public final static String P_MAXGENE = "max-gene";
     
     public final static String P_NUM_SEGMENTS = "num-segments";
@@ -189,6 +194,18 @@ public class IntegerVectorSpecies extends VectorSpecies
     public int getCantCamiones(){
         return cantCamiones;
     }
+    protected int tiempoParada;
+
+    public int getTiempoParada(){
+        return tiempoParada;
+    }
+    
+    protected int duracionTurno;
+
+    public int getDuracionTurno(){
+        return duracionTurno;
+    }
+    
     protected int cantContenedores;
 
     public int getCantContenedores(){
@@ -206,6 +223,12 @@ public class IntegerVectorSpecies extends VectorSpecies
 
     public Double[][] getTiempos(){
         return tiempos;
+    }
+    
+    protected String[][] contenedores;
+
+    public String[][] getContenedores(){
+        return contenedores;
     }
     
     protected int[] capacidadInicialContenedores;
@@ -296,6 +319,8 @@ public class IntegerVectorSpecies extends VectorSpecies
 
         cantContenedores = state.parameters.getInt(base.push(P_CANT_CONTENEDORES), def.push(P_CANT_CONTENEDORES));
         cantCamiones = state.parameters.getInt(base.push(P_CANT_CAMIONES), def.push(P_CANT_CAMIONES));
+        tiempoParada = state.parameters.getInt(base.push(P_TIEMPO_PARADA), def.push(P_TIEMPO_PARADA));
+        duracionTurno = state.parameters.getInt(base.push(P_DURACION_TURNO), def.push(P_DURACION_TURNO));
         capacidadCamion = state.parameters.getInt(base.push(P_CAPACIDAD_CAMION), def.push(P_CAPACIDAD_CAMION));
 
         try{
@@ -313,6 +338,7 @@ public class IntegerVectorSpecies extends VectorSpecies
             //Cargo el generador
             tiempos = new Double [cantContenedores][cantContenedores];
             capacidadInicialContenedores = new int[cantContenedores];
+            contenedores= new String[cantContenedores][2];
             
             for (int j = 0; j < cantContenedores; j++) {
             	capacidadInicialContenedores[j]=Integer.parseInt(br.readLine());
@@ -335,6 +361,13 @@ public class IntegerVectorSpecies extends VectorSpecies
             	for (int j2 = 0; j2 < cantContenedores ; j2++) {
             		if(j!=j2) {
                         line=br.readLine();
+                        if(j2==0) {
+                        	String punto = (line.split("\\*")[2].split(" ")[1]+", "+line.split("\\*")[2].split(" ")[2]).replaceAll("\\(|\\)", "");
+                        	String gid = line.split("\\*")[3].replaceAll(" ", "");
+                        	contenedores[j][0]= gid;
+                        	contenedores[j][1]= punto;
+                        	System.out.println(Arrays.toString(contenedores[j]));
+                        }
                         line_tokens = line.split("\\*");
 						if(line_tokens.length>4) {
 							JSONObject jsonObj;
@@ -352,6 +385,7 @@ public class IntegerVectorSpecies extends VectorSpecies
             		}else {
             			tiempos[j][j]=0.0;
             		}
+//            		System.out.println(Integer.toString(j) + '-' + Integer.toString(j2) + '-' + tiempos[j][j2]);
 				}
 				
 			}

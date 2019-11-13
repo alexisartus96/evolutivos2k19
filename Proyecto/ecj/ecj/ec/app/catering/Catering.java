@@ -5,7 +5,7 @@ import ec.vector.*;
 
 public class Catering extends Problem implements SimpleProblemForm
     {
-	private static int DURACION_TURNO = 10000;
+//	private static int DURACION_TURNO = 5000;
     public void evaluate(final EvolutionState state,
         final Individual ind,
         final int subpopulation,
@@ -26,6 +26,8 @@ public class Catering extends Problem implements SimpleProblemForm
         int cantCotenedores = t_spe.getCantContenedores();
         int cantCamiones= t_spe.getCantCamiones();
         int CAPACIDAD_CAMION= t_spe.getCapacidadCamion();
+        int TIEMPO_PARADA= t_spe.getTiempoParada();
+        int DURACION_TURNO= t_spe.getDuracionTurno();
         //FILTRO Y ARREGLO LAS SOLICIONES INVALIDAS
         //SE PASAN DE PRESUPUESTO
         
@@ -46,6 +48,7 @@ public class Catering extends Problem implements SimpleProblemForm
         		if(capacidadActual > capacidadesIniciales[indiceContenedor]) {
 //                    System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
         			tiempoCamion -= tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[indiceContenedor]];
+        			tiempoCamion -= TIEMPO_PARADA;
         			capacidadActual -= capacidadesIniciales[ind2.genome[indiceContenedor]];
             		fitness += capacidadesIniciales[ind2.genome[indiceContenedor]];
             		indiceContenedor+=1;
@@ -76,6 +79,7 @@ public class Catering extends Problem implements SimpleProblemForm
 		}
 //        System.out.println("salgo del while");
         
+        ind2.setCantContenedores(indiceContenedor);
         
         
         

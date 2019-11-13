@@ -75,8 +75,17 @@ public class IntegerVectorIndividual extends VectorIndividual
     {
     public static final String P_INTEGERVECTORINDIVIDUAL = "int-vect-ind";
     public int[] genome;
+    public int cantContenedores;
     
-    public Parameter defaultBase()
+    public int getCantContenedores() {
+		return cantContenedores;
+	}
+    
+    public void setCantContenedores(int cantContenedores) {
+		this.cantContenedores = cantContenedores;
+	}
+
+	public Parameter defaultBase()
         {
         return VectorDefaults.base().push(P_INTEGERVECTORINDIVIDUAL);
         }
@@ -481,8 +490,10 @@ public class IntegerVectorIndividual extends VectorIndividual
         {
         StringBuilder s = new StringBuilder();
         for( int i = 0 ; i < genome.length ; i++ )
-            { if (i > 0) s.append(" "); s.append(genome[i]); }
-        return s.toString();
+            { if (i > 0) s.append(" - "); s.append(genome[i]); }
+        for( int i = 0 ; i < cantContenedores ; i++ )
+        { if (i > 0) s.append(";"); s.append(Arrays.toString(((IntegerVectorSpecies)species).getContenedores()[genome[i]])); }
+        return s.toString()+" cantidad: "+cantContenedores;
         }
         
     public String genotypeToString()
