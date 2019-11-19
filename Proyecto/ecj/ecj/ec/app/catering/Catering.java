@@ -1,7 +1,11 @@
 package ec.app.catering;
+import java.util.ArrayList;
+import java.util.List;
+
 import ec.*;
 import ec.simple.*;
 import ec.vector.*;
+import jdk.nashorn.internal.runtime.ListAdapter;
 
 public class Catering extends Problem implements SimpleProblemForm
     {
@@ -27,23 +31,28 @@ public class Catering extends Problem implements SimpleProblemForm
         int cantCamiones= t_spe.getCantCamiones();
         int CAPACIDAD_CAMION= t_spe.getCapacidadCamion();
         int TIEMPO_PARADA= t_spe.getTiempoParada();
-        int DURACION_TURNO= t_spe.getDuracionTurno();
+        Double DURACION_TURNO= t_spe.getDuracionTurno();
         //FILTRO Y ARREGLO LAS SOLICIONES INVALIDAS
         //SE PASAN DE PRESUPUESTO
         
         int indiceContenedor = 1;
-        int tiempoCamion = DURACION_TURNO;
+        Double tiempoCamion = DURACION_TURNO;
         int capacidadActual = CAPACIDAD_CAMION;
+        List<List<Integer>> contenedoresPorCamion= new ArrayList<List<Integer>>();
+        List<Integer> listRecorrido = null;
+        
 
 //        System.out.println(tiempos[ind2.genome[0]][ind2.genome[1]]);
         int fitness = 0;
         try {
         while(cantCamiones > 0) {
-        	tiempoCamion = DURACION_TURNO;
+        	listRecorrido = new ArrayList<Integer>();
+    		listRecorrido.add(cantCotenedores);
+        	tiempoCamion = DURACION_TURNO - tiempos[cantCotenedores][ind2.genome[indiceContenedor-1]];
             capacidadActual = CAPACIDAD_CAMION;
             //aca en el while despues le agregamos la distancia que le llelva desde el proximo hasta el felipe cardozo
 //            System.out.println(ind2);
-        	while(indiceContenedor < cantCotenedores  && tiempoCamion > tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[indiceContenedor]]) {
+        	while(indiceContenedor < cantCotenedores  && tiempoCamion > tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[indiceContenedor]]+tiempos[ind2.genome[indiceContenedor]][cantCotenedores]) {
 //                System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
         		if(capacidadActual > capacidadesIniciales[indiceContenedor]) {
 //                    System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
@@ -52,21 +61,27 @@ public class Catering extends Problem implements SimpleProblemForm
         			capacidadActual -= capacidadesIniciales[ind2.genome[indiceContenedor]];
             		fitness += capacidadesIniciales[ind2.genome[indiceContenedor]];
             		indiceContenedor+=1;
+            		listRecorrido.add(ind2.genome[indiceContenedor]);
+            		
 
         		}else {
                     //volvemos al felipe cardozo
-        			tiempoCamion -= tiempos[ind2.genome[indiceContenedor-1]][ind2.genome[0]];
+        			tiempoCamion -= tiempos[ind2.genome[indiceContenedor-1]][cantCotenedores];
         			capacidadActual = CAPACIDAD_CAMION;
+            		listRecorrido.add(cantCotenedores);
         			
         		}
 
 //                System.out.println(indiceContenedor+"###"+tiempoCamion+"###"+capacidadActual+ "---"+capacidadesIniciales[indiceContenedor] +"genoma:"+ind2.genome[indiceContenedor]);
 
         	}
+        	if(listRecorrido.get(listRecorrido.size()-1)!=cantCotenedores) listRecorrido.add(cantCotenedores);
+        	contenedoresPorCamion.add(listRecorrido);
         	cantCamiones--;
         }
 
         }catch (Exception e) {
+        	System.out.println(listRecorrido.toString());
         	System.out.println(indiceContenedor);
         	System.out.println(cantCotenedores);
         	System.out.println(tiempoCamion);
@@ -79,7 +94,7 @@ public class Catering extends Problem implements SimpleProblemForm
 		}
 //        System.out.println("salgo del while");
         
-        ind2.setCantContenedores(indiceContenedor);
+        ind2.setRecorrido(contenedoresPorCamion);
         
         
         

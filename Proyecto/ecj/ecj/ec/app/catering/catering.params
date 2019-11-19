@@ -42,7 +42,7 @@ pop.subpop.0.species.ruta-tiempos = /home/andres/Escritorio/Fing/evolutivos2k19/
 pop.subpop.0.species.cant-camiones = 3
 pop.subpop.0.species.cant-contenedores = 54
 pop.subpop.0.species.tiempo-parada = 50
-pop.subpop.0.species.duracion-turno = 500
+pop.subpop.0.species.duracion-turno = 5000
 pop.subpop.0.species.capacidad-camion = 300
 
 seed.0		= time

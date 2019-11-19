@@ -200,9 +200,9 @@ public class IntegerVectorSpecies extends VectorSpecies
         return tiempoParada;
     }
     
-    protected int duracionTurno;
+    protected Double duracionTurno;
 
-    public int getDuracionTurno(){
+    public Double getDuracionTurno(){
         return duracionTurno;
     }
     
@@ -320,7 +320,7 @@ public class IntegerVectorSpecies extends VectorSpecies
         cantContenedores = state.parameters.getInt(base.push(P_CANT_CONTENEDORES), def.push(P_CANT_CONTENEDORES));
         cantCamiones = state.parameters.getInt(base.push(P_CANT_CAMIONES), def.push(P_CANT_CAMIONES));
         tiempoParada = state.parameters.getInt(base.push(P_TIEMPO_PARADA), def.push(P_TIEMPO_PARADA));
-        duracionTurno = state.parameters.getInt(base.push(P_DURACION_TURNO), def.push(P_DURACION_TURNO));
+        duracionTurno = state.parameters.getDouble(base.push(P_DURACION_TURNO), def.push(P_DURACION_TURNO));
         capacidadCamion = state.parameters.getInt(base.push(P_CAPACIDAD_CAMION), def.push(P_CAPACIDAD_CAMION));
 
         try{
@@ -336,9 +336,9 @@ public class IntegerVectorSpecies extends VectorSpecies
             System.out.println(cantContenedores);
             
             //Cargo el generador
-            tiempos = new Double [cantContenedores][cantContenedores];
+            tiempos = new Double [cantContenedores+1][cantContenedores+1];
             capacidadInicialContenedores = new int[cantContenedores];
-            contenedores= new String[cantContenedores][2];
+            contenedores= new String[cantContenedores+1][2];
             
             for (int j = 0; j < cantContenedores; j++) {
             	capacidadInicialContenedores[j]=Integer.parseInt(br.readLine());
@@ -357,12 +357,12 @@ public class IntegerVectorSpecies extends VectorSpecies
             br.readLine();
             String line = null;
             String [] line_tokens=null;
-            for (int j = 0; j < cantContenedores ; j++) {
-            	for (int j2 = 0; j2 < cantContenedores ; j2++) {
+            for (int j = 0; j <= cantContenedores ; j++) {
+            	for (int j2 = 0; j2 <= cantContenedores ; j2++) {
             		if(j!=j2) {
                         line=br.readLine();
                         if(j2==0) {
-                        	String punto = (line.split("\\*")[2].split(" ")[1]+", "+line.split("\\*")[2].split(" ")[2]).replaceAll("\\(|\\)", "");
+                        	String punto = (line.split("\\*")[2].split(" ")[2]+"%2C"+line.split("\\*")[2].split(" ")[1]).replaceAll("\\(|\\)", "");
                         	String gid = line.split("\\*")[3].replaceAll(" ", "");
                         	contenedores[j][0]= gid;
                         	contenedores[j][1]= punto;

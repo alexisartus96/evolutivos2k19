@@ -75,14 +75,15 @@ public class IntegerVectorIndividual extends VectorIndividual
     {
     public static final String P_INTEGERVECTORINDIVIDUAL = "int-vect-ind";
     public int[] genome;
-    public int cantContenedores;
+    private List<List<Integer>> recorrido;
+	
     
-    public int getCantContenedores() {
-		return cantContenedores;
+    public List<List<Integer>> getRecorrido() {
+		return recorrido;
 	}
     
-    public void setCantContenedores(int cantContenedores) {
-		this.cantContenedores = cantContenedores;
+    public void setRecorrido(List<List<Integer>> recorrido) {
+		this.recorrido = recorrido;
 	}
 
 	public Parameter defaultBase()
@@ -491,9 +492,17 @@ public class IntegerVectorIndividual extends VectorIndividual
         StringBuilder s = new StringBuilder();
         for( int i = 0 ; i < genome.length ; i++ )
             { if (i > 0) s.append(" - "); s.append(genome[i]); }
-        for( int i = 0 ; i < cantContenedores ; i++ )
-        { if (i > 0) s.append(";"); s.append(Arrays.toString(((IntegerVectorSpecies)species).getContenedores()[genome[i]])); }
-        return s.toString()+" cantidad: "+cantContenedores;
+        //&loc=-34.904446%2C-56.178932&loc=-34.904833%2C-56.165328&loc=-34.910185%2C-56.165833
+        
+        for (List<Integer> list : recorrido) {
+        	s.append("http://localhost:9966/?z=16&center=-34.907807%2C-56.168708");
+			for (Integer contenedor : list) {
+				s.append("&loc=");
+	        	s.append(((IntegerVectorSpecies)species).getContenedores()[contenedor][1]); 
+			}
+		}
+        
+        return s.toString();
         }
         
     public String genotypeToString()
