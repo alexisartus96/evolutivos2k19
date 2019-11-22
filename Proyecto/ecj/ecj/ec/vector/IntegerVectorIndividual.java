@@ -501,6 +501,16 @@ public class IntegerVectorIndividual extends VectorIndividual
 	        	s.append(((IntegerVectorSpecies)species).getContenedores()[contenedor][1]); 
 			}
 		}
+        int aux=genomeLength();
+        for (List<Integer> list : recorrido) {
+        	s.append("\n");
+			for (Integer contenedor : list) {
+				if(contenedor<genomeLength()) {
+					s.append(contenedor+"-"+((IntegerVectorSpecies)species).getCapacidadInicial()[contenedor]+"+"+((IntegerVectorSpecies)species).tiempos[aux][contenedor]+";");
+				}else s.append(contenedor+"+"+((IntegerVectorSpecies)species).tiempos[aux][contenedor]+";");
+				aux=contenedor;
+			}
+		}
         
         return s.toString();
         }

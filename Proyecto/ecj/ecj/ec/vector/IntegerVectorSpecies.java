@@ -104,6 +104,8 @@ public class IntegerVectorSpecies extends VectorSpecies
 
     public final static String RUTA_GENERATOR = "ruta-generator";
     
+    public final static String RUTA_PERSONAS_CONTENEDOR = "ruta-personas-contenedor";
+    
     public final static String RUTA_TIEMPOS = "ruta-tiempos";
 
     public final static String P_TIEMPO_PARADA= "tiempo-parada";
@@ -338,7 +340,7 @@ public class IntegerVectorSpecies extends VectorSpecies
             //Cargo el generador
             tiempos = new Double [cantContenedores+1][cantContenedores+1];
             capacidadInicialContenedores = new int[cantContenedores];
-            contenedores= new String[cantContenedores+1][2];
+            contenedores= new String[cantContenedores+1][3];
             
             for (int j = 0; j < cantContenedores; j++) {
             	capacidadInicialContenedores[j]=Integer.parseInt(br.readLine());
@@ -348,6 +350,30 @@ public class IntegerVectorSpecies extends VectorSpecies
 
             br.close();
             
+            //-----------CARGA DE PERSONAS POR CONTENEDOR----------------------------
+            
+            //System.out.println(ruta_limite_barrios);
+            String ruta_personas_contenedor = state.parameters.getStringWithDefault(base.push(RUTA_PERSONAS_CONTENEDOR), def.push(RUTA_PERSONAS_CONTENEDOR), null);
+            System.out.println(ruta_personas_contenedor);
+            fin = new File(ruta_personas_contenedor);
+            fis = new FileInputStream(fin);
+        	Map<Integer, String> personasContenedor= new HashMap<Integer, String>();
+        	String line = null;
+            
+            br = new BufferedReader(new InputStreamReader(fis));
+            br.readLine();
+                        
+            for (int j = 0; j < cantContenedores; j++) {
+            	line= br.readLine();
+            	personasContenedor.put(Integer.valueOf(line.split(";")[3].replaceAll(" ", "")), line.split(";")[4].replace(",", "."));
+                System.out.println(line);
+			}
+            
+            System.out.println("CARGA DE PERSONAS POR CONTENEDOR EXITOSA");
+
+            br.close();
+            
+            
             //-----------CARGA DE TIEMPOS----------------------------
             String ruta_tiempos = state.parameters.getStringWithDefault(base.push(RUTA_TIEMPOS), def.push(RUTA_TIEMPOS), null);
             //System.out.println(ruta_limite_barrios);
@@ -355,18 +381,19 @@ public class IntegerVectorSpecies extends VectorSpecies
             fis = new FileInputStream(fin);
             br = new BufferedReader(new InputStreamReader(fis));
             br.readLine();
-            String line = null;
+            line = null;
             String [] line_tokens=null;
             for (int j = 0; j <= cantContenedores ; j++) {
             	for (int j2 = 0; j2 <= cantContenedores ; j2++) {
             		if(j!=j2) {
                         line=br.readLine();
-                        if(j2==0) {
+                        if(j2<=1) {
                         	String punto = (line.split("\\*")[2].split(" ")[2]+"%2C"+line.split("\\*")[2].split(" ")[1]).replaceAll("\\(|\\)", "");
                         	String gid = line.split("\\*")[3].replaceAll(" ", "");
                         	contenedores[j][0]= gid;
                         	contenedores[j][1]= punto;
-                        	System.out.println(Arrays.toString(contenedores[j]));
+                        	if(Integer.valueOf(gid)!=0) contenedores[j][2]=Double.toString(Double.valueOf(personasContenedor.get(Integer.valueOf(gid)))/1000);
+//                        	System.out.println(Arrays.toString(contenedores[j]));
                         }
                         line_tokens = line.split("\\*");
 						if(line_tokens.length>4) {
