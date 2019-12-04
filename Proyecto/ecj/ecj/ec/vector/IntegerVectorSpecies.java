@@ -354,7 +354,7 @@ public class IntegerVectorSpecies extends VectorSpecies
             
             //System.out.println(ruta_limite_barrios);
             String ruta_personas_contenedor = state.parameters.getStringWithDefault(base.push(RUTA_PERSONAS_CONTENEDOR), def.push(RUTA_PERSONAS_CONTENEDOR), null);
-            System.out.println(ruta_personas_contenedor);
+            //System.out.println(ruta_personas_contenedor);
             fin = new File(ruta_personas_contenedor);
             fis = new FileInputStream(fin);
         	Map<Integer, String> personasContenedor= new HashMap<Integer, String>();
@@ -366,7 +366,7 @@ public class IntegerVectorSpecies extends VectorSpecies
             for (int j = 0; j < cantContenedores; j++) {
             	line= br.readLine();
             	personasContenedor.put(Integer.valueOf(line.split(";")[3].replaceAll(" ", "")), line.split(";")[4].replace(",", "."));
-                System.out.println(line);
+                //System.out.println(line);
 			}
             
             System.out.println("CARGA DE PERSONAS POR CONTENEDOR EXITOSA");
@@ -392,7 +392,7 @@ public class IntegerVectorSpecies extends VectorSpecies
                         	String gid = line.split("\\*")[3].replaceAll(" ", "");
                         	contenedores[j][0]= gid;
                         	contenedores[j][1]= punto;
-                        	if(Integer.valueOf(gid)!=0) contenedores[j][2]=Double.toString(Double.valueOf(personasContenedor.get(Integer.valueOf(gid)))/1000);
+                        	if(Integer.valueOf(gid)!=0) contenedores[j][2]=Double.toString(Double.valueOf(personasContenedor.get(Integer.valueOf(gid)))/17280);
 //                        	System.out.println(Arrays.toString(contenedores[j]));
                         }
                         line_tokens = line.split("\\*");

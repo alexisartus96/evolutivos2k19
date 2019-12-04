@@ -495,23 +495,24 @@ public class IntegerVectorIndividual extends VectorIndividual
         //&loc=-34.904446%2C-56.178932&loc=-34.904833%2C-56.165328&loc=-34.910185%2C-56.165833
         
         for (List<Integer> list : recorrido) {
+        	s.append(recorrido.size());
         	s.append("http://localhost:9966/?z=16&center=-34.907807%2C-56.168708");
 			for (Integer contenedor : list) {
 				s.append("&loc=");
 	        	s.append(((IntegerVectorSpecies)species).getContenedores()[contenedor][1]); 
 			}
 		}
-        int aux=genomeLength();
-        for (List<Integer> list : recorrido) {
-        	s.append("\n");
-			for (Integer contenedor : list) {
-				if(contenedor<genomeLength()) {
-					s.append(contenedor+"-"+((IntegerVectorSpecies)species).getCapacidadInicial()[contenedor]+"+"+((IntegerVectorSpecies)species).tiempos[aux][contenedor]+";");
-				}else s.append(contenedor+"+"+((IntegerVectorSpecies)species).tiempos[aux][contenedor]+";");
-				aux=contenedor;
-			}
-		}
-        
+//        int aux=genomeLength();
+//        for (List<Integer> list : recorrido) {
+//        	s.append("\n");
+//			for (Integer contenedor : list) {
+//				if(contenedor<genomeLength()) {
+//					s.append(contenedor+"-"+((IntegerVectorSpecies)species).getCapacidadInicial()[contenedor]+"+"+((IntegerVectorSpecies)species).tiempos[aux][contenedor]+";");
+//				}else s.append(contenedor+"+"+((IntegerVectorSpecies)species).tiempos[aux][contenedor]+";");
+//				aux=contenedor;
+//			}
+//		}
+//        
         return s.toString();
         }
         

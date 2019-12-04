@@ -61,7 +61,7 @@ ec/app/tutorial1/*.java \
 ec/app/tutorial2/*.java \
 ec/app/tutorial3/*.java \
 ec/app/tutorial4/*.java \
-ec/app/catering/*.java \
+ec/app/proyecto/*.java \
 ec/app/coevolve1/*.java \
 ec/app/coevolve2/*.java \
 ec/app/twobox/*.java \
